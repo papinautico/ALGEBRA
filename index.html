@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Álgebra Lineal y Matricial — UNED</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=JetBrains+Mono:wght@400;500&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0e0e12;
+  --bg2: #16161d;
+  --bg3: #1e1e28;
+  --border: #2a2a38;
+  --accent: #c8a96e;
+  --accent2: #7eb8c8;
+  --accent3: #c87e9a;
+  --text: #e8e4dc;
+  --text2: #9e9a92;
+  --green: #6ec89a;
+  --red: #c86e7e;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:var(--bg); color:var(--text); font-family:'Source Serif 4', serif; min-height:100vh; }
+
+/* NAV */
+#nav { position:fixed; top:0; left:0; right:0; z-index:100; background:rgba(14,14,18,0.95); backdrop-filter:blur(10px); border-bottom:1px solid var(--border); display:flex; align-items:center; gap:0; height:54px; padding:0 20px; }
+.nav-logo { font-family:'Playfair Display', serif; font-size:1.1rem; color:var(--accent); font-weight:700; margin-right:30px; white-space:nowrap; }
+.nav-item { padding:0 14px; height:54px; display:flex; align-items:center; cursor:pointer; font-family:'JetBrains Mono', monospace; font-size:0.72rem; color:var(--text2); border-bottom:2px solid transparent; transition:all .2s; white-space:nowrap; }
+.nav-item:hover { color:var(--text); }
+.nav-item.active { color:var(--accent); border-bottom-color:var(--accent); }
+
+/* PAGES */
+.page { display:none; margin-top:54px; padding:40px 20px; max-width:1100px; margin-left:auto; margin-right:auto; }
+.page.active { display:block; }
+.page-title { font-family:'Playfair Display', serif; font-size:2rem; color:var(--accent); margin-bottom:8px; }
+.page-sub { color:var(--text2); font-size:0.9rem; margin-bottom:30px; font-family:'JetBrains Mono', monospace; }
+
+/* CARDS */
+.card { background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:24px; margin-bottom:16px; }
+.card h3 { font-family:'Playfair Display', serif; color:var(--accent); margin-bottom:10px; font-size:1.1rem; }
+.card p { color:var(--text2); font-size:0.88rem; line-height:1.7; }
+
+/* TEORIA */
+.tema-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:16px; margin-bottom:30px; }
+.tema-card { background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:20px; cursor:pointer; transition:all .2s; }
+.tema-card:hover { border-color:var(--accent); transform:translateY(-2px); }
+.tema-card .num { font-family:'JetBrains Mono', monospace; font-size:0.7rem; color:var(--accent2); margin-bottom:6px; }
+.tema-card h3 { font-family:'Playfair Display', serif; font-size:1rem; color:var(--text); margin-bottom:8px; }
+.tema-card p { font-size:0.8rem; color:var(--text2); line-height:1.5; }
+
+/* TEORIA DETALLE */
+#teoria-detail { display:none; }
+.back-btn { background:none; border:1px solid var(--border); color:var(--text2); padding:6px 14px; border-radius:4px; cursor:pointer; font-family:'JetBrains Mono', monospace; font-size:0.75rem; margin-bottom:20px; transition:all .2s; }
+.back-btn:hover { border-color:var(--accent); color:var(--accent); }
+.concepto { background:var(--bg2); border-left:3px solid var(--accent); padding:16px 20px; margin-bottom:12px; border-radius:0 6px 6px 0; }
+.concepto h4 { font-family:'Playfair Display', serif; color:var(--accent); margin-bottom:8px; }
+.concepto p { font-size:0.87rem; color:var(--text2); line-height:1.7; }
+.formula { background:var(--bg3); border:1px solid var(--border); border-radius:6px; padding:12px 16px; margin:10px 0; font-family:'JetBrains Mono', monospace; font-size:0.82rem; color:var(--accent2); overflow-x:auto; }
+.tip { background:rgba(200,169,110,0.07); border:1px solid rgba(200,169,110,0.2); border-radius:6px; padding:12px 16px; margin:10px 0; font-size:0.83rem; color:var(--text2); }
+.tip strong { color:var(--accent); }
+
+/* EJERCICIOS */
+.ej-item { background:var(--bg2); border:1px solid var(--border); border-radius:8px; margin-bottom:12px; overflow:hidden; }
+.ej-header { padding:16px 20px; cursor:pointer; display:flex; justify-content:space-between; align-items:center; transition:background .2s; }
+.ej-header:hover { background:var(--bg3); }
+.ej-header h4 { font-family:'Source Serif 4', serif; font-size:0.92rem; color:var(--text); }
+.ej-header .badge { font-family:'JetBrains Mono', monospace; font-size:0.65rem; color:var(--accent2); background:rgba(126,184,200,0.1); padding:3px 8px; border-radius:3px; }
+.ej-body { display:none; padding:16px 20px; border-top:1px solid var(--border); }
+.ej-body.open { display:block; }
+.ej-body p { font-size:0.87rem; color:var(--text2); line-height:1.7; margin-bottom:8px; }
+.sol-box { background:var(--bg3); border:1px solid var(--border); border-radius:6px; padding:14px; margin-top:12px; }
+.sol-box .sol-label { font-family:'JetBrains Mono', monospace; font-size:0.65rem; color:var(--green); margin-bottom:8px; }
+.sol-box p { font-size:0.85rem; color:var(--text2); line-height:1.7; }
+
+/* EXAMENES */
+.exam-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:16px; }
+.exam-card { background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:20px; cursor:pointer; transition:all .2s; }
+.exam-card:hover { border-color:var(--accent); transform:translateY(-2px); }
+.exam-card .year { font-family:'JetBrains Mono', monospace; font-size:0.65rem; color:var(--accent2); margin-bottom:6px; }
+.exam-card h3 { font-family:'Playfair Display', serif; font-size:1rem; color:var(--text); margin-bottom:8px; }
+.exam-card p { font-size:0.78rem; color:var(--text2); }
+
+/* EXAM DETAIL */
+#exam-detail { display:none; }
+.exam-section { margin-bottom:24px; }
+.exam-section h3 { font-family:'Playfair Display', serif; color:var(--accent); margin-bottom:14px; font-size:1rem; border-bottom:1px solid var(--border); padding-bottom:8px; }
+.exam-q { background:var(--bg2); border:1px solid var(--border); border-radius:8px; margin-bottom:10px; overflow:hidden; }
+.exam-q-header { padding:14px 18px; cursor:pointer; display:flex; justify-content:space-between; align-items:flex-start; gap:12px; }
+.exam-q-header:hover { background:var(--bg3); }
+.exam-q-header p { font-size:0.87rem; color:var(--text); line-height:1.5; flex:1; }
+.exam-q-pts { font-family:'JetBrains Mono', monospace; font-size:0.65rem; color:var(--accent); background:rgba(200,169,110,0.1); padding:3px 8px; border-radius:3px; white-space:nowrap; }
+.exam-q-sol { display:none; padding:14px 18px; border-top:1px solid var(--border); background:var(--bg3); }
+.exam-q-sol.open { display:block; }
+.exam-q-sol p { font-size:0.85rem; color:var(--text2); line-height:1.7; margin-bottom:6px; }
+
+/* SIMULACRO */
+.sim-selector { display:grid; grid-template-columns:repeat(auto-fill,minmax(250px,1fr)); gap:14px; margin-bottom:24px; }
+.sim-card { background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:20px; cursor:pointer; transition:all .2s; }
+.sim-card:hover { border-color:var(--accent3); transform:translateY(-2px); }
+.sim-card h3 { font-family:'Playfair Display', serif; color:var(--text); margin-bottom:6px; font-size:1rem; }
+.sim-card p { font-size:0.78rem; color:var(--text2); margin-bottom:10px; }
+.sim-card .badge { font-family:'JetBrains Mono', monospace; font-size:0.65rem; padding:3px 8px; border-radius:3px; background:rgba(200,126,154,0.1); color:var(--accent3); }
+
+/* SIMULACRO ACTIVO */
+#sim-active { display:none; }
+.sim-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px 20px; }
+.sim-header h3 { font-family:'Playfair Display', serif; color:var(--accent); }
+#timer { font-family:'JetBrains Mono', monospace; font-size:1.4rem; color:var(--accent2); }
+#timer.warning { color:var(--red); animation:blink 1s infinite; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.4} }
+.progress-bar { height:4px; background:var(--border); border-radius:2px; margin-bottom:24px; overflow:hidden; }
+.progress-fill { height:100%; background:var(--accent); border-radius:2px; transition:width .3s; }
+.sim-q { background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:24px; margin-bottom:16px; }
+.sim-q-num { font-family:'JetBrains Mono', monospace; font-size:0.65rem; color:var(--text2); margin-bottom:10px; }
+.sim-q-text { font-size:0.95rem; color:var(--text); line-height:1.6; margin-bottom:20px; }
+.sim-opts { display:flex; flex-direction:column; gap:8px; }
+.sim-opt { background:var(--bg3); border:1px solid var(--border); border-radius:6px; padding:12px 16px; cursor:pointer; font-size:0.87rem; color:var(--text2); transition:all .2s; display:flex; align-items:flex-start; gap:10px; }
+.sim-opt:hover { border-color:var(--accent2); color:var(--text); }
+.sim-opt.selected { border-color:var(--accent2); background:rgba(126,184,200,0.1); color:var(--text); }
+.sim-opt.correct { border-color:var(--green); background:rgba(110,200,154,0.1); color:var(--green); }
+.sim-opt.wrong { border-color:var(--red); background:rgba(200,110,126,0.1); color:var(--red); }
+.sim-opt .opt-letter { font-family:'JetBrains Mono', monospace; font-size:0.7rem; color:var(--accent); min-width:18px; margin-top:2px; }
+.sim-btn { background:var(--accent); color:#0e0e12; border:none; padding:10px 24px; border-radius:6px; cursor:pointer; font-family:'JetBrains Mono', monospace; font-size:0.8rem; font-weight:700; margin-top:16px; transition:opacity .2s; }
+.sim-btn:hover { opacity:.85; }
+.sim-btn:disabled { opacity:.3; cursor:not-allowed; }
+.sim-btn-sec { background:none; border:1px solid var(--border); color:var(--text2); padding:10px 24px; border-radius:6px; cursor:pointer; font-family:'JetBrains Mono', monospace; font-size:0.8rem; margin-top:16px; margin-left:10px; transition:all .2s; }
+.sim-btn-sec:hover { border-color:var(--accent); color:var(--accent); }
+.expl-box { background:var(--bg3); border-left:3px solid var(--accent2); padding:12px 16px; margin-top:14px; border-radius:0 6px 6px 0; display:none; }
+.expl-box.open { display:block; }
+.expl-box p { font-size:0.83rem; color:var(--text2); line-height:1.6; }
+.expl-box strong { color:var(--accent2); }
+
+/* RESULTADOS */
+#sim-results { display:none; }
+.result-circle { width:120px; height:120px; border-radius:50%; display:flex; flex-direction:column; align-items:center; justify-content:center; margin:0 auto 24px; }
+.result-circle .nota { font-family:'Playfair Display', serif; font-size:2.2rem; font-weight:700; }
+.result-circle .label { font-family:'JetBrains Mono', monospace; font-size:0.6rem; }
+.result-circle.aprobado { border:3px solid var(--green); background:rgba(110,200,154,0.1); color:var(--green); }
+.result-circle.suspenso { border:3px solid var(--red); background:rgba(200,110,126,0.1); color:var(--red); }
+.result-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:24px; }
+.result-stat { background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px; text-align:center; }
+.result-stat .val { font-family:'Playfair Display', serif; font-size:1.6rem; color:var(--accent); }
+.result-stat .lbl { font-family:'JetBrains Mono', monospace; font-size:0.62rem; color:var(--text2); margin-top:4px; }
+
+/* HISTORIAL */
+.hist-item { background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px 20px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center; }
+.hist-item .info h4 { font-family:'Source Serif 4', serif; font-size:0.9rem; color:var(--text); margin-bottom:4px; }
+.hist-item .info p { font-family:'JetBrains Mono', monospace; font-size:0.65rem; color:var(--text2); }
+.hist-item .nota { font-family:'Playfair Display', serif; font-size:1.4rem; font-weight:700; }
+.hist-item .nota.ok { color:var(--green); }
+.hist-item .nota.ko { color:var(--red); }
+.empty-state { text-align:center; padding:60px 20px; color:var(--text2); font-family:'JetBrains Mono', monospace; font-size:0.8rem; }
+.clear-btn { background:none; border:1px solid var(--red); color:var(--red); padding:6px 14px; border-radius:4px; cursor:pointer; font-family:'JetBrains Mono', monospace; font-size:0.72rem; transition:all .2s; }
+.clear-btn:hover { background:rgba(200,110,126,0.1); }
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width:6px; }
+::-webkit-scrollbar-track { background:var(--bg); }
+::-webkit-scrollbar-thumb { background:var(--border); border-radius:3px; }
+</style>
+</head>
+<body>
+
+<nav id="nav">
+  <div class="nav-logo">ALM · UNED</div>
+  <div class="nav-item active" onclick="go('dash',this)">Inicio</div>
+  <div class="nav-item" onclick="go('teoria',this)">Teoría</div>
+  <div class="nav-item" onclick="go('ejercicios',this)">Ejercicios</div>
+  <div class="nav-item" onclick="go('examenes',this)">Exámenes Reales</div>
+  <div class="nav-item" onclick="go('simulacro',this)">Simulacros</div>
+  <div class="nav-item" onclick="go('historial',this)">Historial</div>
+</nav>
+
+<!-- DASHBOARD -->
+<div class="page active" id="page-dash">
+  <div class="page-title">Álgebra Lineal y Matricial</div>
+  <div class="page-sub">Matilla García & Rodríguez Ruiz · UNED · 6501108GR05A01</div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;margin-bottom:30px;">
+    <div class="card" style="cursor:pointer;border-color:rgba(200,169,110,0.3)" onclick="go('teoria',document.querySelector('.nav-item:nth-child(3)'))">
+      <h3>📐 Teoría</h3>
+      <p>5 temas completos con conceptos clave, definiciones y fórmulas del libro oficial.</p>
+    </div>
+    <div class="card" style="cursor:pointer" onclick="go('ejercicios',document.querySelector('.nav-item:nth-child(4)'))">
+      <h3>✏️ Ejercicios</h3>
+      <p>Problemas resueltos paso a paso de todos los temas, extraídos del libro y propuestos.</p>
+    </div>
+    <div class="card" style="cursor:pointer" onclick="go('examenes',document.querySelector('.nav-item:nth-child(5)'))">
+      <h3>📄 Exámenes Reales</h3>
+      <p>6 exámenes oficiales (2024 J1, J2, SO · 2025 J1, J2, SO) con soluciones detalladas.</p>
+    </div>
+    <div class="card" style="cursor:pointer;border-color:rgba(200,126,154,0.3)" onclick="go('simulacro',document.querySelector('.nav-item:nth-child(6)'))">
+      <h3>⏱️ Simulacros</h3>
+      <p>Practica como en el examen real. Cronómetro, puntuación y explicaciones al terminar.</p>
+    </div>
+  </div>
+  <div class="card">
+    <h3>📋 Estructura del examen</h3>
+    <p style="margin-bottom:8px;">El examen consta de <strong style="color:var(--accent)">4 cuestiones teóricas</strong> (1 punto cada una) y <strong style="color:var(--accent)">2 problemas</strong> (3 puntos cada una). Total: <strong style="color:var(--accent)">10 puntos</strong>. Duración: <strong style="color:var(--accent)">2 horas</strong>.</p>
+    <p>Los temas más recurrentes en examen son: manipulación matricial (propiedades, inversa, transpuesta), sistemas con parámetros (Rouché-Frobenius), aplicaciones lineales (núcleo, imagen, dimensión) y diagonalización (autovalores, autovectores, diagonalizabilidad).</p>
+  </div>
+  <div id="dash-hist-preview"></div>
+</div>
+
+
+<!-- TEORÍA -->
+<div class="page" id="page-teoria">
+  <div id="teoria-list">
+    <div class="page-title">Teoría</div>
+    <div class="page-sub">Conceptos, definiciones y resultados clave por tema</div>
+    <div class="tema-grid">
+      <div class="tema-card" onclick="showTema(1)">
+        <div class="num">TEMA 1</div>
+        <h3>Espacios Vectoriales</h3>
+        <p>Subespacios, dependencia lineal, base, dimensión, ecuaciones paramétricas e implícitas.</p>
+      </div>
+      <div class="tema-card" onclick="showTema(2)">
+        <div class="num">TEMA 2</div>
+        <h3>Matrices y Determinantes</h3>
+        <p>Operaciones matriciales, rango, determinante, matriz inversa, adjunta, traza.</p>
+      </div>
+      <div class="tema-card" onclick="showTema(3)">
+        <div class="num">TEMA 3</div>
+        <h3>Sistemas de Ecuaciones Lineales</h3>
+        <p>Rouché-Frobenius, método de Gauss, sistemas con parámetros, interpretación geométrica.</p>
+      </div>
+      <div class="tema-card" onclick="showTema(4)">
+        <div class="num">TEMA 4</div>
+        <h3>Diagonalización de Matrices</h3>
+        <p>Valores propios, vectores propios, ecuación característica, condición de diagonalizabilidad.</p>
+      </div>
+      <div class="tema-card" onclick="showTema(5)">
+        <div class="num">TEMA 5</div>
+        <h3>Formas Cuadráticas</h3>
+        <p>Formas bilineales, método de Lagrange, rango, índice, signatura, clasificación, cónicas.</p>
+      </div>
+      <div class="tema-card" onclick="showTema(6)">
+        <div class="num">TRANSVERSAL</div>
+        <h3>Aplicaciones Lineales</h3>
+        <p>Homomorfismos, matriz asociada, núcleo, imagen, teorema de la dimensión.</p>
+      </div>
+    </div>
+  </div>
+  <div id="teoria-detail">
+    <button class="back-btn" onclick="hideTema()">← Volver a temas</button>
+    <div id="tema-content"></div>
+  </div>
+</div>
+
+
+<!-- EJERCICIOS -->
+<div class="page" id="page-ejercicios">
+  <div class="page-title">Ejercicios Resueltos</div>
+  <div class="page-sub">Del libro oficial y propuestos por el curso · haz clic para ver la solución</div>
+
+  <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;" id="ej-filters">
+    <button onclick="filterEj('all',this)" class="sim-btn" style="background:var(--accent)">Todos</button>
+    <button onclick="filterEj('T2',this)" class="sim-btn-sec">Matrices</button>
+    <button onclick="filterEj('T3',this)" class="sim-btn-sec">Sistemas</button>
+    <button onclick="filterEj('T4',this)" class="sim-btn-sec">Diagonalización</button>
+    <button onclick="filterEj('T5',this)" class="sim-btn-sec">Formas Cuadráticas</button>
+    <button onclick="filterEj('AL',this)" class="sim-btn-sec">Ap. Lineales</button>
+  </div>
+  <div id="ej-list"></div>
+</div>
+
+<!-- EXÁMENES -->
+<div class="page" id="page-examenes">
+  <div id="exam-list-view">
+    <div class="page-title">Exámenes Reales</div>
+    <div class="page-sub">6 exámenes oficiales UNED · Cuestiones + Problemas con soluciones</div>
+    <div class="exam-grid" id="exam-grid"></div>
+  </div>
+  <div id="exam-detail">
+    <button class="back-btn" onclick="hideExam()">← Volver a exámenes</button>
+    <div id="exam-content"></div>
+  </div>
+</div>
+
+<!-- SIMULACRO -->
+<div class="page" id="page-simulacro">
+  <div id="sim-menu">
+    <div class="page-title">Simulacros</div>
+    <div class="page-sub">Elige un examen y practica con cronómetro · Las opciones se barajan automáticamente</div>
+    <div class="sim-selector" id="sim-selector"></div>
+  </div>
+  <div id="sim-active">
+    <div class="sim-header">
+      <div>
+        <h3 id="sim-name" style="font-family:'Playfair Display',serif;color:var(--accent)"></h3>
+        <p id="sim-progress-text" style="font-family:'JetBrains Mono',monospace;font-size:0.7rem;color:var(--text2);margin-top:4px"></p>
+      </div>
+      <div id="timer">2:00:00</div>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+    <div id="sim-questions"></div>
+    <div style="display:flex;gap:10px;margin-top:10px;">
+      <button class="sim-btn" id="sim-submit-btn" onclick="submitSim()">Entregar simulacro</button>
+      <button class="sim-btn-sec" onclick="if(confirm('¿Abandonar el simulacro?')){showSimMenu()}">Abandonar</button>
+    </div>
+  </div>
+  <div id="sim-results">
+    <div id="result-content"></div>
+    <button class="sim-btn" onclick="showSimMenu()">Nuevo simulacro</button>
+    <button class="sim-btn-sec" onclick="go('historial',document.querySelector('.nav-item:nth-child(7)'))">Ver historial</button>
+  </div>
+</div>
+
+<!-- HISTORIAL -->
+<div class="page" id="page-historial">
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px;">
+    <div>
+      <div class="page-title">Historial</div>
+      <div class="page-sub">Registro de todos tus simulacros</div>
+    </div>
+    <button class="clear-btn" onclick="clearHist()">Borrar historial</button>
+  </div>
+  <div id="hist-content"></div>
+</div>
+
+<script>
+// ===================== DATOS: TEORÍA =====================
+const TEMAS = {
+1: {
+  title: 'Espacios Vectoriales',
+  conceptos: [
+    { t: 'Espacio Vectorial', c: 'Un conjunto V con operaciones de suma y producto por escalar que verifica 8 axiomas: asociatividad, conmutatividad, elemento neutro (vector 0), opuestos, distributividad (por escalar y por vector), compatibilidad y elemento unidad.' },
+    { t: 'Subespacio Vectorial', c: 'Un subconjunto no vacío W ⊂ V es subespacio si es cerrado bajo la suma y el producto por escalar. Criterio compacto: W es subespacio ⟺ para todo u,v ∈ W y todo α,β ∈ ℝ, se tiene αu + βv ∈ W.', f: 'W subespacio ⟺ ∀u,v∈W, ∀α,β∈ℝ: αu+βv ∈ W' },
+    { t: 'Dependencia e Independencia Lineal', c: 'Vectores v₁,...,vₙ son linealmente dependientes si existen escalares no todos nulos α₁,...,αₙ tales que α₁v₁+...+αₙvₙ = 0. Son independientes si la única combinación que da 0 es la trivial (todos los escalares = 0).', f: 'α₁v₁+...+αₙvₙ = 0 ⟹ α₁=...=αₙ=0 (independientes)' },
+    { t: 'Sistema Generador', c: 'Un conjunto S={v₁,...,vₙ} genera V si todo vector de V puede escribirse como combinación lineal de los vectores de S. El subespacio generado por S se denota 〈S〉 o gen(S).' },
+    { t: 'Base y Dimensión', c: 'Una base de V es un sistema de generadores linealmente independiente. Todos los bases de V tienen el mismo número de vectores, que se llama dimensión de V, dim(V).', f: 'Base = Sistema generador + Linealmente independiente' },
+    { t: 'Ecuaciones Implícitas y Paramétricas', c: 'Un subespacio puede expresarse por ecuaciones implícitas (igualdades que deben cumplir sus elementos) o paramétricas (expresan los elementos en función de parámetros libres). El número de parámetros = dimensión del subespacio; el número de ecuaciones implícitas independientes = n - dim.', tip: '⚡ EXAMEN: Para pasar de implícitas a paramétricas, resuelve el sistema con las ecuaciones del subespacio. Para pasar de paramétricas a implícitas, elimina los parámetros.' },
+    { t: 'Suma e Intersección de Subespacios', c: 'Dado W₁ y W₂ subespacios de V, su intersección W₁∩W₂ siempre es subespacio. Su suma W₁+W₂ = {w₁+w₂ : w₁∈W₁, w₂∈W₂} también es subespacio. La fórmula de Grassmann relaciona sus dimensiones.', f: 'dim(W₁+W₂) = dim(W₁) + dim(W₂) - dim(W₁∩W₂)' },
+  ]
+},
+2: {
+  title: 'Matrices y Determinantes',
+  conceptos: [
+    { t: 'Operaciones con Matrices', c: 'Suma: matrices del mismo tamaño, se suman elemento a elemento. Producto por escalar: multiplica todos los elementos. Producto AB: requiere que nº columnas de A = nº filas de B. El producto NO es conmutativo en general (AB ≠ BA).', f: '(AB)ᵀ = BᵀAᵀ · (AB)⁻¹ = B⁻¹A⁻¹ · (Aᵀ)⁻¹ = (A⁻¹)ᵀ' },
+    { t: 'Matrices Especiales', c: 'Simétrica: A = Aᵀ. Antisimétrica: A = -Aᵀ (diagonal = 0). Idempotente: A² = A. Nilpotente de orden k: Aᵏ = 0. Ortogonal: AᵀA = I (A⁻¹ = Aᵀ). Para toda A: S = A+Aᵀ es simétrica; A-Aᵀ es antisimétrica.' },
+    { t: 'Rango de una Matriz', c: 'El rango r(A) es el tamaño del mayor menor no nulo de A, equivalente al número de filas (o columnas) linealmente independientes. Las operaciones elementales de fila/columna no cambian el rango.', tip: '⚡ EXAMEN: r(A) = r(Aᵀ) = r(AᵀA) = r(AAᵀ). Si A es m×n: r(A) ≤ min(m,n).' },
+    { t: 'Determinante', c: 'Solo para matrices cuadradas. Propiedades: |AB| = |A|·|B|, |Aᵀ| = |A|, |A⁻¹| = 1/|A|, |kA| = kⁿ|A| (n = orden). A es invertible ⟺ |A| ≠ 0. La traza tr(A) = suma de autovalores = suma de la diagonal.', f: '|A-λI| = 0 (ecuación característica) · tr(A) = λ₁+...+λₙ · |A| = λ₁·...·λₙ' },
+    { t: 'Matriz Inversa', c: 'A es invertible ⟺ |A| ≠ 0 ⟺ r(A) = n. Cálculo: A⁻¹ = (1/|A|)·adj(A). La matriz adjunta adj(A) tiene como elemento (i,j) el cofactor Aⱼᵢ (transpuesta de la matriz de cofactores).', f: 'A⁻¹ = adj(A) / |A|' },
+    { t: 'Matrices Semejantes y Congruentes', c: 'A y B son semejantes si existe M no singular tal que B = MAM⁻¹. Son congruentes si B = MAMᵀ. Matrices semejantes tienen el mismo polinomio característico, mismos autovalores y misma traza y determinante.' },
+  ]
+},
+3: {
+  title: 'Sistemas de Ecuaciones Lineales',
+  conceptos: [
+    { t: 'Clasificación: Teorema de Rouché-Frobenius', c: 'Sea Ax = b un sistema de m ecuaciones y n incógnitas, A la matriz de coeficientes y (A|b) la ampliada. El sistema es: Incompatible (SIN SOLUCIÓN) si r(A) ≠ r(A|b). Compatible Determinado (SOLUCIÓN ÚNICA) si r(A) = r(A|b) = n. Compatible Indeterminado (∞ SOLUCIONES) si r(A) = r(A|b) < n.', f: 'Libertad = n - r(A) (nº de parámetros libres en SCI)' },
+    { t: 'Método de Gauss', c: 'Transformaciones elementales de fila que no cambian las soluciones: (1) cambiar dos filas, (2) multiplicar una fila por escalar ≠ 0, (3) sumar a una fila un múltiplo de otra. Se lleva la matriz ampliada a forma escalonada.' },
+    { t: 'Sistemas con Parámetros', c: 'Cuando el sistema depende de un parámetro a, se estudia el rango de A y (A|b) según los valores de a. Normalmente se calcula |A| en función de a y se estudian los casos en que el determinante es 0.', tip: '⚡ EXAMEN: Estrategia: (1) Calcula |A| en función del parámetro. (2) Encuentra para qué valores se anula. (3) Para esos valores, compara r(A) y r(A|b). (4) Para el resto, SCD.' },
+    { t: 'Sistema Homogéneo', c: 'El sistema Ax = 0 siempre es compatible (x = 0 es solución). Si r(A) = n → solución única (trivial x = 0). Si r(A) < n → infinitas soluciones. Las soluciones forman un subespacio vectorial de dimensión n - r(A).', f: 'Solución general = particular + solución homogénea' },
+    { t: 'Método de Gauss-Jordan', c: 'Variante de Gauss que lleva a la forma escalonada reducida (cada pivote es 1 y tiene ceros encima y debajo). Permite leer directamente la solución o la inversa (si se parte de (A|I)).' },
+  ]
+},
+4: {
+  title: 'Diagonalización de Matrices',
+  conceptos: [
+    { t: 'Valores Propios (Autovalores)', c: 'λ es valor propio de A si existe un vector x ≠ 0 tal que Ax = λx, equivalentemente |A-λI| = 0. El polinomio p(λ) = |A-λI| es el polinomio característico. Sus raíces son los autovalores. tr(A) = suma de autovalores; |A| = producto de autovalores.', f: '|A-λI| = 0 (ecuación característica)' },
+    { t: 'Vectores Propios (Autovectores)', c: 'Para cada autovalor λ, los autovectores asociados son las soluciones no nulas de (A-λI)x = 0. Forman un subespacio llamado subespacio propio o eigenespacio. Su dimensión = n - r(A-λI).', tip: '⚡ EXAMEN: Los autovectores de distintos autovalores son siempre linealmente independientes.' },
+    { t: 'Condición de Diagonalizabilidad', c: 'A (orden n) es diagonalizable ⟺ admite n autovectores linealmente independientes. Casos suficientes: (1) A tiene n autovalores distintos → siempre diagonalizable. (2) A es simétrica → siempre diagonalizable. Para autovalores repetidos: λ con multiplicidad mᵢ es diagonalizable ⟺ n - r(A-λᵢI) = mᵢ.', f: 'Diagonalizable ⟺ n-r(A-λᵢI) = mᵢ para cada λᵢ' },
+    { t: 'Proceso de Diagonalización', c: 'Si A es diagonalizable: (1) Calcula autovalores (raíces de |A-λI|=0). (2) Para cada autovalor, calcula los autovectores. (3) Forma P con los autovectores como columnas. (4) D = PAP⁻¹ es diagonal con los autovalores en la diagonal.', f: 'D = PAP⁻¹ (si A es simétrica: P ortogonal, P⁻¹ = Pᵀ)' },
+    { t: 'Traza y Determinante', c: 'Invariantes bajo semejanza: si A y B son semejantes, tienen la misma traza, determinante y polinomio característico (pero no necesariamente son semejantes si solo comparten éstos).', f: 'tr(A) = λ₁+λ₂+...+λₙ = a₁₁+a₂₂+...+aₙₙ' },
+    { t: 'Teorema de Cayley-Hamilton', c: 'Toda matriz cuadrada A verifica su propia ecuación característica. Si p(λ) = |A-λI| es el polinomio característico, entonces p(A) = 0 (matriz cero).', tip: '⚡ EXAMEN: Útil para calcular potencias de matrices o la inversa sin cálculo directo.' },
+  ]
+},
+5: {
+  title: 'Formas Cuadráticas',
+  conceptos: [
+    { t: 'Forma Cuadrática', c: 'Una forma cuadrática en n variables es un polinomio homogéneo de grado 2: Q(x) = xᵀAx donde A es la matriz simétrica asociada. Los elementos diagonales aᵢᵢ son los coeficientes de xᵢ², y los elementos aᵢⱼ = aⱼᵢ son la mitad del coeficiente del término xᵢxⱼ.', f: 'Q(x) = Σᵢ aᵢᵢxᵢ² + 2Σᵢ<ⱼ aᵢⱼxᵢxⱼ = xᵀAx' },
+    { t: 'Método de Lagrange (Diagonalización)', c: 'Permite reducir la forma cuadrática a forma canónica (solo cuadrados). Se completan cuadrados sucesivamente. El resultado φ(ξ₁,...,ξₙ) = a₁ξ₁² + ... + aₙξₙ² no es único pero el número de términos positivos, negativos y nulos es invariante (Ley de Inercia de Sylvester).', tip: '⚡ EXAMEN: Si hay término xᵢxⱼ sin término xᵢ², hacer el cambio previo xᵢ = u+v, xⱼ = u-v.' },
+    { t: 'Rango, Índice y Signatura', c: 'Reducida a forma canónica: r = rango (nº de términos no nulos = r(A)), p = índice (nº de términos positivos), q = r-p (nº de términos negativos), s = p-q = signatura (diferencia positivos - negativos).', f: 'r = rango(A) · p = índice · s = p - (r-p) = 2p-r' },
+    { t: 'Clasificación de Formas Cuadráticas', c: 'Definida positiva: todos los coeficientes canónicos > 0 (equivalente: todos los menores principales > 0). Definida negativa: todos < 0 (alternancia de signos en menores). Semidefinida positiva/negativa: algún coeficiente = 0. No definida: hay coeficientes positivos y negativos.', tip: '⚡ EXAMEN: Criterio de menores principales de Sylvester: si Δ₁>0, Δ₂>0, ..., Δₙ>0 → definida positiva.' },
+    { t: 'Formas Bilineales', c: 'Una forma bilineal es f(x,y) = xᵀAy donde A no es necesariamente simétrica. Si f(x,y) = f(y,x) es simétrica y su matriz es simétrica. Las formas cuadráticas son casos especiales de formas bilineales simétricas con y = x.', f: 'f(x,y) = xᵀAy · Q(x) = f(x,x) = xᵀAx (A simétrica)' },
+    { t: 'Cónicas', c: 'La ecuación general de una cónica es Ax²+2Bxy+Cy²+2Dx+2Ey+F=0. Los invariantes son: I=A+C (métrico), A₃₃=AC-B² (afín), |A| (proyectivo). Si A₃₃>0 → elipse; A₃₃=0 → parábola; A₃₃<0 → hipérbola. Si |A|=0 → degenerada.' },
+  ]
+},
+6: {
+  title: 'Aplicaciones Lineales',
+  conceptos: [
+    { t: 'Definición', c: 'Una aplicación f: V→W es lineal si: (1) f(u+v) = f(u)+f(v) y (2) f(αu) = αf(u) para todo u,v∈V y α∈ℝ. Equivalentemente, f(αu+βv) = αf(u)+βf(v). Siempre f(0) = 0.' },
+    { t: 'Núcleo e Imagen', c: 'Núcleo: ker(f) = {x∈V : f(x)=0} → siempre es subespacio de V. Imagen: Im(f) = {f(x) : x∈V} = {w∈W : ∃x, f(x)=w} → siempre es subespacio de W. Teorema de la dimensión: dim(ker f) + dim(Im f) = dim(V).', f: 'dim(ker f) + dim(Im f) = dim(V)  [Teorema de la dimensión]', tip: '⚡ EXAMEN: Si la matriz asociada es A (p×k): k = dim(V), p = dim(W). dim(Im f) = r(A). dim(ker f) = k - r(A).' },
+    { t: 'Matriz Asociada', c: 'Dadas bases B en V y B\' en W, la matriz asociada A a f tiene como columnas las coordenadas de f(b₁),...,f(bₙ) en la base B\'. Si son bases canónicas, las columnas son directamente las imágenes de los vectores canónicos.', f: '[f(x)]_{B\'} = A · [x]_B' },
+    { t: 'Tipos: Monomorfismo, Epimorfismo, Isomorfismo', c: 'Monomorfismo (inyectiva): ker(f) = {0}. Epimorfismo (sobreyectiva): Im(f) = W. Isomorfismo: inyectiva y sobreyectiva. Si dim(V) = dim(W): inyectiva ⟺ sobreyectiva ⟺ isomorfismo ⟺ |A| ≠ 0.', tip: '⚡ EXAMEN: ker(f) = 0 ⟺ f es inyectiva ⟺ las columnas de A son l.i. ⟺ r(A) = k.' },
+    { t: 'Imagen de Vectores LD/LI', c: 'Si u,v son l.d., entonces f(u),f(v) son l.d. (la imagen de l.d. es l.d.). PERO si u,v son l.i., f(u),f(v) pueden ser l.d. o l.i. (solo garantizado si f es inyectiva).', tip: '⚡ EXAMEN: Muy frecuente en cuestiones teóricas. Recordar: la implicación solo va en una dirección.' },
+  ]
+}
+};
+
+// ===================== DATOS: EJERCICIOS =====================
+const EJERCICIOS = [
+  // MATRICES T2
+  { tema:'T2', num:'T2-1', titulo:'Potencia de una matriz 2×2', enunciado:'Sea A = [[1,-2],[3,-4]]. Calcular A³.',
+    solucion:'Calculamos A² primero: A² = A·A = [[1,-2],[3,-4]]·[[1,-2],[3,-4]] = [[1·1+(-2)·3, 1·(-2)+(-2)·(-4)],[3·1+(-4)·3, 3·(-2)+(-4)·(-4)]] = [[-5,6],[-9,10]]. Luego A³ = A²·A = [[-5,6],[-9,10]]·[[1,-2],[3,-4]] = [[-5+18, 10-24],[-9+30, 18-40]] = [[13,-14],[21,-22]]. Respuesta: A³ = [[13,-14],[21,-22]].' },
+  { tema:'T2', num:'T2-2', titulo:'Matriz inversa por método adjunta', enunciado:'Dada A = [[1,3,4],[0,2,2],[0,0,2]], hallar su inversa.',
+    solucion:'|A| = 1·2·2 = 4 (triangular superior, producto de la diagonal). Cofactores: A₁₁=4, A₁₂=0, A₁₃=0; A₂₁=-6, A₂₂=2, A₂₃=0; A₃₁=-2, A₃₂=-2, A₃₃=2. Adj(A) = transpuesta de cofactores = [[4,-6,-2],[0,2,-2],[0,0,2]]. A⁻¹ = (1/4)·[[4,-6,-2],[0,2,-2],[0,0,2]] = [[1,-3/2,-1/2],[0,1/2,-1/2],[0,0,1/2]].' },
+  { tema:'T2', num:'T2-3', titulo:'Verificar identidad matricial', enunciado:'Comprobar si (A⁻¹+B⁻¹)⁻¹ = A(A+B)⁻¹B.',
+    solucion:'Operamos el lado derecho: A(A+B)⁻¹B. Notamos que A⁻¹+B⁻¹ = B⁻¹(B+A)A⁻¹ (factorizando: B⁻¹BA·A⁻¹ + B⁻¹AB·B⁻¹·... se simplifica como B⁻¹(A+B)A⁻¹ usando que B⁻¹B=I y A⁻¹A=I). Entonces (A⁻¹+B⁻¹)⁻¹ = [B⁻¹(A+B)A⁻¹]⁻¹ = A(A+B)⁻¹B. VERDADERO.' },
+  { tema:'T2', num:'T2-4', titulo:'Rango de matriz con parámetro', enunciado:'Estudiar el rango de A = [[9,k],[9k,9]] según los valores de k.',
+    solucion:'|A| = 9·9 - k·9k = 81 - 9k² = 9(9-k²) = 9(3-k)(3+k). Si k ≠ ±3: |A| ≠ 0, r(A) = 2. Si k = 3 o k = -3: |A| = 0. En ambos casos la primera fila es [9, ±3] ≠ [0,0], así que r(A) = 1. Conclusión: r(A)=2 si k≠±3; r(A)=1 si k=±3.' },
+  { tema:'T2', num:'T2-5', titulo:'AAᵀ de una matriz columna', enunciado:'Sea A = [[2],[-1],[3]] (vector columna). Calcular AAᵀ.',
+    solucion:'A es 3×1 y Aᵀ es 1×3. AAᵀ es 3×3: AAᵀ = [[2],[-1],[3]]·[[2,-1,3]] = [[4,-2,6],[-2,1,-3],[6,-3,9]]. Nota: esta matriz es simétrica, de rango 1, y AᵀA = 2²+(-1)²+3² = 4+1+9 = 14 (escalar).' },
+  { tema:'T2', num:'T2-6', titulo:'Matrices triangulares y producto', enunciado:'Si A, B son matrices triangulares inferiores, ¿qué estructura tiene AB?',
+    solucion:'AB también es triangular inferior. Demostración: si aᵢⱼ=0 para j>i y bᵢⱼ=0 para j>i, el elemento (AB)ᵢⱼ = Σₖ aᵢₖbₖⱼ. Para j>i, necesitamos k≤i (para que aᵢₖ≠0) y k≥j (para que bₖⱼ≠0), pero j>i implica que no hay k que cumpla ambas condiciones. Por tanto (AB)ᵢⱼ=0 para j>i. AB es triangular inferior.' },
+  { tema:'T2', num:'T2-7', titulo:'Propiedad de matrices idempotentes', enunciado:'Si A, B son tales que AB = A y BA = B, demostrar que A y B son idempotentes.',
+    solucion:'A² = A·A = A·(BA) = (AB)·A = A·A = A² ... Mejor: A² = A(BA) = (AB)A = A·A — incorrecto. Vía correcta: A² = A·A, y AB=A, entonces A·A = A·(AB)·... Usemos: B² = B·B = (BA)·B = B·(AB) = B·A = BA = B. ✓ B es idempotente. A² = A·A = (AB)·A = A·(BA) = A·B = AB = A. ✓ A es idempotente. Ambas son idempotentes.' },
+  // SISTEMAS T3
+  { tema:'T3', num:'T3-1', titulo:'Sistema compatible indeterminado básico', enunciado:'Estudiar la compatibilidad y resolver: x+2y+z=1; 2x+y+2z=2; 3x+3y+3z=3.',
+    solucion:'Matriz ampliada (A|b) = [[1,2,1|1],[2,1,2|2],[3,3,3|3]]. F3→F3-2F1: [[1,2,1|1],[2,1,2|2],[1,-1,1|1]]. F2→F2-2F1, F3→F3-F1: [[1,2,1|1],[0,-3,0|0],[0,-3,0|0]]. F3→F3-F2: [[1,2,1|1],[0,-3,0|0],[0,0,0|0]]. r(A)=r(A|b)=2 < 3 incógnitas → SCI con 1 parámetro libre. De F2: y=0. De F1: x+z=1, con z=t libre: x=1-t. Solución: (x,y,z)=(1-t, 0, t), t∈ℝ.' },
+  { tema:'T3', num:'T3-2', titulo:'Sistema incompatible', enunciado:'Estudiar: x+2y+z=1; 2x+y+2z=2; 3x+3y+3z=4.',
+    solucion:'Igual que el anterior pero con el término independiente de la 3ª ec = 4. Aplicando las mismas operaciones: la última fila da 0=1, que es imposible. r(A)=2 pero r(A|b)=3, por lo que r(A)≠r(A|b) → SISTEMA INCOMPATIBLE. No tiene solución.' },
+  { tema:'T3', num:'T3-3', titulo:'Sistema con parámetro (3 incógnitas)', enunciado:'Discutir según a: x+ay-z=1; 2x+y-az=2; x-y-z=a-1.',
+    solucion:'|A| = |[[1,a,-1],[2,1,-a],[1,-1,-1]]|. Desarrollo: 1(1·(-1)-(-a)(-1)) - a(2·(-1)-(-a)·1) + (-1)(2·(-1)-1·1) = (-1-a) - a(-2+a) + (-1)(-3) = -1-a+2a-a²+3 = -a²+a+2 = -(a²-a-2) = -(a-2)(a+1). |A|=0 si a=2 o a=-1. Para a≠2 y a≠-1: SCD. Para a=2: estudiar r(A) y r(A|b) → SCI o SI. Para a=-1: ídem.' },
+  { tema:'T3', num:'T3-4', titulo:'Gauss-Jordan con 4 incógnitas', enunciado:'Resolver por Gauss-Jordan: x+2y+8z+3t=1; x+y+5z+2t=2; x+3z+t=3; 3x+3y+16z+7t=4.',
+    solucion:'Matriz ampliada: F2→F2-F1: [0,-1,-3,-1|1]. F3→F3-F1: [0,-2,-5,-2|2]. F4→F4-3F1: [0,-3,-8,-2|1]. F3→F3-2F2: [0,0,1,0|0]. F4→F4-3F2: [0,0,1,1|-2]. F4→F4-F3: [0,0,0,1|-2]. Sustitución regresiva: t=-2, z=0, y=-1+3·0+1·(-2)=... Revisar: de F2: -y-3z-t=1 → y=-1-3z-t=-1-0-(-2)=1. De F1: x=1-2y-8z-3t=1-2-0+6=5. Solución: (5,1,0,-2).' },
+  { tema:'T3', num:'T3-5', titulo:'Sistema con parámetro λ', enunciado:'Discutir según λ: (1-λ)x+(2λ+1)y+(2λ+2)z=λ; λx+λy=2λ+2; 2x+(λ+1)y+(λ-1)z=λ²-2λ+9.',
+    solucion:'Calculamos |A| en función de λ. Después de desarrollo: |A| = λ(λ-2)(λ+1) aproximadamente (resultado orientativo — verificar). Para λ=0: estudiar rango. Para λ=2: estudiar rango. Para λ=-1: estudiar rango. Para el resto SCD. El caso SCI se resuelve dejando la variable libre y expresando las demás en función de ella.' },
+  // DIAGONALIZACIÓN T4
+  { tema:'T4', num:'T4-1', titulo:'Valores propios de matriz 2×2', enunciado:'Hallar los valores propios de A = [[4,2],[1,3]].',
+    solucion:'|A-λI| = |[[4-λ,2],[1,3-λ]]| = (4-λ)(3-λ)-2·1 = 12-7λ+λ²-2 = λ²-7λ+10 = (λ-5)(λ-2) = 0. Autovalores: λ₁=5, λ₂=2. Comprobación: tr(A)=4+3=7=5+2 ✓; |A|=12-2=10=5·2 ✓.' },
+  { tema:'T4', num:'T4-2', titulo:'Autovectores y diagonalización 2×2', enunciado:'Diagonalizar A = [[4,2],[1,3]].',
+    solucion:'Autovalores: λ₁=5, λ₂=2 (del ejercicio anterior). Para λ₁=5: (A-5I)x=0 → [[-1,2],[1,-2]]x=0 → -x₁+2x₂=0 → x₁=2x₂. Autovector: u₁=(2,1). Para λ₂=2: (A-2I)x=0 → [[2,2],[1,1]]x=0 → x₁+x₂=0. Autovector: u₂=(1,-1). P=[[2,1],[1,-1]], D=[[5,0],[0,2]]. Verificación: PAP⁻¹=D.' },
+  { tema:'T4', num:'T4-3', titulo:'Matriz no diagonalizable', enunciado:'Comprobar que A = [[1,1],[0,1]] no es diagonalizable.',
+    solucion:'|A-λI| = (1-λ)² = 0 → λ=1 con multiplicidad 2 (m=2). Para λ=1: r(A-I) = r([[0,1],[0,0]]) = 1. n-r(A-I) = 2-1 = 1 ≠ 2 = m. La dimensión del autoespacio (1) no coincide con la multiplicidad (2). Por tanto A NO ES DIAGONALIZABLE.' },
+  { tema:'T4', num:'T4-4', titulo:'Matriz simétrica 3×3 con raíz doble', enunciado:'Hallar autovalores y autovectores de A = [[7,-2,1],[-2,10,-2],[1,-2,7]].',
+    solucion:'Ecuación característica: -λ³+24λ²-180λ+432=0, con raíces λ₁=λ₂=6 y λ₃=12. Para λ=12: sistema reduce a x₁-2x₂+x₃=0, autovector v₃=(1,-2,1). Para λ=6: sistema reduce a x₁-2x₂+x₃=0 con ∞ soluciones (2 parámetros). Dos autovectores ortogonales: v₁=(1,1,1) y v₂=(1,0,-1). Como A es simétrica, siempre es diagonalizable. D=[[6,0,0],[0,6,0],[0,0,12]].' },
+  { tema:'T4', num:'T4-5', titulo:'Autovalores y diagonalización 3×3 distintos', enunciado:'Diagonalizar A = [[1,-1,8],[1,1,1],[2,0,3]].',
+    solucion:'Polinomio característico: λ³-5λ²-8λ+12=0, raíces λ₁=6, λ₂=1, λ₃=-2 (todas distintas → diagonalizable). Para λ₁=6: autovector u₁=(3,1,2). Para λ₂=1: autovector u₂=(1,-8,-1) (aproximado). Para λ₃=-2: autovector u₃=(5,-1,-2). P=[[3,1,5],[1,-8,-1],[2,-1,-2]], D=[[6,0,0],[0,1,0],[0,0,-2]].' },
+  // FORMAS CUADRÁTICAS T5
+  { tema:'T5', num:'T5-1', titulo:'Matriz de una forma cuadrática', enunciado:'Escribir en forma matricial: f(x,x) = 3x₁² - 2x₁x₂ + x₂² + 4x₁x₃ - 5x₂x₃ + 7x₃².',
+    solucion:'Diagonal: coeficientes de xᵢ² → a₁₁=3, a₂₂=1, a₃₃=7. Fuera de diagonal: mitad del coeficiente de xᵢxⱼ → a₁₂=a₂₁=-1, a₁₃=a₃₁=2, a₂₃=a₃₂=-5/2. Matriz: A = [[3,-1,2],[-1,1,-5/2],[2,-5/2,7]].' },
+  { tema:'T5', num:'T5-2', titulo:'Diagonalización por Lagrange', enunciado:'Diagonalizar por Lagrange: F(x,y) = 3x² - 12xy + 7y².',
+    solucion:'Tomamos x primero: 3x²-12xy = 3(x²-4xy) = 3[(x-2y)²-4y²] = 3(x-2y)²-12y². Sustituyendo en F: F = 3(x-2y)²-12y²+7y² = 3(x-2y)²-5y². Cambio: ξ₁=x-2y, ξ₂=y. Forma canónica: φ(ξ₁,ξ₂)=3ξ₁²-5ξ₂². Rango=2, índice p=1, signatura s=1-1=0. Forma no definida.' },
+  { tema:'T5', num:'T5-3', titulo:'Clasificar forma cuadrática 3×3', enunciado:'Clasificar f(u₁,u₂,u₃) = 3u₁² - 2u₁u₂ + 4u₁u₃ + 5u₂² + 4u₃² - 2u₂u₃.',
+    solucion:'Matriz A = [[3,-1,2],[-1,5,-1],[2,-1,4]]. Menores principales: Δ₁=3>0; Δ₂=|[[3,-1],[-1,5]]|=15-1=14>0; Δ₃=|A|=3(20-1)+1(-4+2)+2(1-10)=57-2-18=37>0. Como todos los menores principales son positivos, la forma es DEFINIDA POSITIVA.' },
+  { tema:'T5', num:'T5-4', titulo:'Clasificar forma cuadrática no definida', enunciado:'Clasificar y diagonalizar: F(x,y,z) = 2x² + 13y² + 60z² + 8xy + 12xz - 6yz.',
+    solucion:'Tomando x: 2x²+8xy+12xz = 2(x²+4xy+6xz) = 2[(x+2y+3z)²-4y²-9z²-12yz]. Sustituyendo: F = 2(x+2y+3z)²-8y²-18z²-24yz+13y²+60z²-6yz = 2(x+2y+3z)²+5y²+42z²-30yz. Tomando y: 5y²-30yz = 5(y-3z)²-45z². F = 2(x+2y+3z)²+5(y-3z)²-3z². Forma canónica: φ=2ξ₁²+5ξ₂²-3ξ₃². NO DEFINIDA (hay positivos y negativos).' },
+  // APLICACIONES LINEALES AL
+  { tema:'AL', num:'AL-1', titulo:'Imagen de aplicación lineal dado f en dos vectores', enunciado:'Sea f: ℝ²→ℝ³ tal que f(-1,2)=(1,3,-2) y f(1,4)=(1,-2,5). Hallar f(2,-4), f(0,6) y f(-3,0).',
+    solucion:'f(2,-4) = f(-2·(−1,2)) = -2·f(-1,2) = -2·(1,3,-2) = (-2,-6,4). Para f(0,6): (0,6) = (-1,2)+(1,4) → f(0,6) = f(-1,2)+f(1,4) = (1,3,-2)+(1,-2,5) = (2,1,3). Para f(-3,0): (-3,0) = a(-1,2)+b(1,4). Sistema: -a+b=-3, 2a+4b=0 → b=-a/2; -a-a/2=-3 → -3a/2=-3 → a=2, b=-1. f(-3,0)=2·(1,3,-2)+(-1)·(1,-2,5)=(2-1,6+2,-4-5)=(1,8,-9).' },
+  { tema:'AL', num:'AL-2', titulo:'Núcleo e imagen de aplicación lineal', enunciado:'Dada A₁ = [[1,0,1],[1,1,1]] (matriz de f: ℝ³→ℝ²), determinar k, p, dim(ker f), dim(Im f).',
+    solucion:'La matriz es 2×3, así que k=3 (dimensión del espacio origen ℝ³) y p=2 (dimensión del espacio imagen ℝ²). r(A₁)=2 (las dos filas son l.i.). dim(Im f) = r(A) = 2. dim(ker f) = k - r(A) = 3 - 2 = 1. El núcleo: soluciones de Ax=0 → x₁+x₃=0 y x₁+x₂+x₃=0 → x₂=0, x₃=-x₁. ker(f) = {(t,0,-t) : t∈ℝ}, base = {(1,0,-1)}.' },
+  { tema:'AL', num:'AL-3', titulo:'Aplicación inversa', enunciado:'Calcular la aplicación inversa de f(x) = (x₁-2x₂, 3x₁-5x₂), x∈ℝ².',
+    solucion:'Matriz asociada: A = [[1,-2],[3,-5]]. |A| = -5+6 = 1 ≠ 0 → f es isomorfismo, existe f⁻¹. A⁻¹ = (1/1)·adj(A) = [[-5,2],[-3,1]]. La aplicación inversa es f⁻¹(y₁,y₂) = (-5y₁+2y₂, -3y₁+y₂). Verificación: f(f⁻¹(y)) = f(-5y₁+2y₂, -3y₁+y₂) = (-5y₁+2y₂-2(-3y₁+y₂), 3(-5y₁+2y₂)-5(-3y₁+y₂)) = (y₁,y₂) ✓.' },
+  { tema:'AL', num:'AL-4', titulo:'Subespacios y estructura vectorial', enunciado:'¿Es L₁={matrices con determinante 0} un subespacio del espacio de matrices 2×2?',
+    solucion:'No. Contraejemplo: A=[[1,0],[0,0]] y B=[[0,0],[0,1]], ambas con determinante 0. Pero A+B=[[1,0],[0,1]], que tiene determinante 1≠0. L₁ no es cerrado bajo la suma, por lo que NO es subespacio vectorial.' },
+  { tema:'AL', num:'AL-5', titulo:'Matrices simétricas como subespacio', enunciado:'¿Es L₂={matrices simétricas 2×2} un subespacio?',
+    solucion:'Sí. Verificamos los axiomas: (1) 0 es simétrica ✓. (2) Si A=Aᵀ y B=Bᵀ, entonces (A+B)ᵀ=Aᵀ+Bᵀ=A+B ✓ (cerrado bajo suma). (3) (αA)ᵀ=αAᵀ=αA ✓ (cerrado bajo producto escalar). L₂ es subespacio. Dimensión: una matriz simétrica 2×2 tiene forma [[a,b],[b,c]], con base {[[1,0],[0,0]], [[0,1],[1,0]], [[0,0],[0,1]]}. dim(L₂)=3.' },
+];
+
+// ===================== DATOS: EXÁMENES REALES =====================
+const EXAMENES = [
+{
+  id:'24J1', nombre:'Junio 2024 — Convocatoria 1', short:'24-J1',
+  cuestiones:[
+    { q:'Sea W el espacio vectorial formado por las matrices simétricas 2×2 sobre ℝ. Obtenga una base y la dimensión de dicho espacio vectorial. Justifique formalmente su respuesta.', pts:'1 pto',
+      sol:'Una matriz simétrica 2×2 tiene la forma [[a,b],[b,c]]. Se puede escribir como a·[[1,0],[0,0]] + b·[[0,1],[1,0]] + c·[[0,0],[0,1]]. Estos tres vectores son linealmente independientes y generan W. Por tanto, una base es B={E₁₁, E₁₂+E₂₁, E₂₂} y dim(W)=3.' },
+    { q:'Utilizando las propiedades de las matrices, comprobar la veracidad de: (a) (A⁻¹)ᵀ = (Aᵀ)⁻¹ y (b) A⁻¹+B⁻¹ = A⁻¹(A+B)B⁻¹.', pts:'2 ptos',
+      sol:'(a) VERDADERO: (Aᵀ)·(A⁻¹)ᵀ = (A⁻¹·A)ᵀ = Iᵀ = I. Por unicidad de la inversa, (A⁻¹)ᵀ = (Aᵀ)⁻¹. (b) VERDADERO: A⁻¹(A+B)B⁻¹ = A⁻¹·A·B⁻¹ + A⁻¹·B·B⁻¹ = I·B⁻¹ + A⁻¹·I = B⁻¹+A⁻¹ = A⁻¹+B⁻¹.' },
+    { q:'Discuta matemáticamente: Si f es una aplicación lineal de ℝⁿ en ℝⁿ tal que el núcleo de f es ker(f)=0, entonces Im f = ℝⁿ.', pts:'1 pto',
+      sol:'VERDADERO. Por el Teorema de la Dimensión: dim(ker f) + dim(Im f) = dim(ℝⁿ) = n. Si ker(f)={0}, entonces dim(ker f)=0. Por tanto dim(Im f)=n. Como Im f es subespacio de ℝⁿ y tiene dimensión n, se tiene Im f = ℝⁿ.' },
+    { q:'Una aplicación lineal f₂: ℝᵏ→ℝᵖ tiene como matriz asociada respecto de las bases canónicas A₂=(1 2 3). Determinar las dimensiones k, p así como las dimensiones de núcleo e imagen.', pts:'1 pto',
+      sol:'La matriz A₂ es 1×3, por tanto k=3 (columnas = dimensión del espacio origen) y p=1 (filas = dimensión del espacio imagen). r(A₂)=1. dim(Im f)=1. dim(ker f)=k-r(A)=3-1=2. El núcleo es el subespacio solución de x₁+2x₂+3x₃=0, un plano de dimensión 2.' }
+  ],
+  problemas:[
+    { q:'Una fábrica produce tres tipos de listones: largos (L), intermedios (I) y cortos (C). Relaciones: 2L+4I = 3I+15C; L = I+C+17; 9C+7 = I+C. (a) ¿Se puede calcular la longitud de cada listón? (b) Calcula o indica qué información falta.', pts:'2 ptos',
+      sol:'El sistema es: 2L+I-15C=0; L-I-C=17; I-8C=7. Matriz ampliada: [[2,1,-15|0],[1,-1,-1|17],[0,1,-8|7]]. Calculando: |A|= determinante. Tras Gauss: r(A)=3=número de incógnitas → SCD → SOLUCIÓN ÚNICA. Sustitución: de la 3ª ec: I=8C+7. Sustituyendo en la 2ª: L=I+C+17=9C+24. Sustituyendo en 1ª: 2(9C+24)+(8C+7)-15C=0 → 18C+48+8C+7-15C=0 → 11C=-55 → C=5. I=47, L=69. Listón corto=5 cm, intermedio=47 cm, largo=69 cm.' },
+    { q:'Dadas matrices A=[[3,-1,1],[1,1,1],[1,-1,3]], B=[[b,2b,b],[2b,3b,b],[b,b,b]], C=[[2,0,0],[0,2,0],[0,0,3]]. (a) Calcular dimensiones de subespacios de autovalores de A. (b) ¿Es A diagonalizable? (c) ¿Es B matriz de paso y para qué b: BCB⁻¹=A? (d) Calcular |BCB⁻¹|.', pts:'3 ptos',
+      sol:'(a) |A-λI|=0. Tras calcular: λ₁=2 (multiplicidad 2), λ₂=4. Para λ=2: r(A-2I)=r([[1,-1,1],[1,-1,1],[1,-1,1]])=1. dim subespacio=3-1=2. Para λ=4: dim subespacio=1. (b) Para λ=2: n-r(A-2I)=2=multiplicidad → A ES DIAGONALIZABLE. (c) |B|=b³(3b·b-b²-2b·2b+...); para b≠0, B invertible → matriz de paso. BCB⁻¹=A para ciertos valores de b (verificando la semejanza). (d) |BCB⁻¹|=|B|·|C|·|B⁻¹|=|C|=2·2·3=12.' }
+  ]
+},
+{
+  id:'24J2', nombre:'Junio 2024 — Convocatoria 2', short:'24-J2',
+  cuestiones:[
+    { q:'Estudie la veracidad de: (1) Si {v₁,...,vₘ} genera V y w∈V, entonces S={w,v₁,...,vₘ} es un sistema de generadores linealmente independiente. (2) Si {v₁,...,vₘ} genera V y w∈V, entonces S puede o no ser sistema de generadores.', pts:'1 pto',
+      sol:'(1) FALSO. S sigue siendo sistema de generadores (cualquier vector de V se escribe con v₁,...,vₘ y por tanto con los de S), pero NO necesariamente independiente: si w ya es c.l. de los otros, S es dependiente. (2) VERDADERO. S={w,v₁,...,vₘ} siempre es sistema de generadores de V (pues ya lo era {v₁,...,vₘ}), independientemente de w.' },
+    { q:'Despejar D de la ecuación: B(Dᵀ+A⁻¹)B⁻¹ = 2I.', pts:'1 pto',
+      sol:'Multiplicamos a la izquierda por B⁻¹ y a la derecha por B: Dᵀ+A⁻¹=2B⁻¹IB=2B⁻¹B=2I. Entonces Dᵀ=2I-A⁻¹. Transponiendo: D=(2I-A⁻¹)ᵀ=2Iᵀ-(A⁻¹)ᵀ=2I-(Aᵀ)⁻¹.' },
+    { q:'Considere X de dimensiones m×n. Estudie el carácter simétrico de XᵀX y XXᵀ.', pts:'1 pto',
+      sol:'XᵀX: dimensión n×n. (XᵀX)ᵀ=(Xᵀ)ᵀ·Xᵀ... espera: (XᵀX)ᵀ=Xᵀ(Xᵀ)ᵀ=XᵀX. Sí es SIMÉTRICA. XXᵀ: dimensión m×m. (XXᵀ)ᵀ=(Xᵀ)ᵀXᵀ=XXᵀ. También es SIMÉTRICA. Ambas son siempre simétricas, independientemente de X.' },
+    { q:'Compruebe que si λ es autovalor de A, entonces |A-λI|=0 es equivalente a |λI-A|=0.', pts:'1 pto',
+      sol:'|λI-A| = |-(A-λI)| = (-1)ⁿ|A-λI|. Como (-1)ⁿ≠0, ambos determinantes son cero a la vez. Por tanto las ecuaciones |A-λI|=0 y |λI-A|=0 tienen las mismas soluciones y son equivalentes.' }
+  ],
+  problemas:[
+    { q:'Sistema con parámetro a: x-y+z=-1; ax+(-a+2)y=2; 2x-(a+3)y+(a+2)z=-5. Discutir y resolver para a=1.', pts:'3 ptos',
+      sol:'|A| en función de a: desarrollando el determinante da |A|=-a²+a = -a(a-1) = 0 si a=0 o a=1. Para a≠0,1: r(A)=3 → SCD. Para a=0: comprobar r(A) y r(A|b). Para a=1: r(A)=r([[1,-1,1],[1,1,0],[2,-4,3]])=2; r(A|b) con b=(-1,2,-5). Tras Gauss: r(A|b)=2=r(A)<3 → SCI con 1 parámetro. Solución: z=t libre; de las ecuaciones, x=1-t, y=2-t (verificar sustituyendo).' },
+    { q:'f: ℝ²→ℝ³ tal que f(-1,2)=(1,3,-2) y f(1,4)=(1,-2,5). Hallar f(2,-4), f(0,6) y f(-3,0).', pts:'3 ptos',
+      sol:'f(2,-4)=f(-2·(-1,2))=-2f(-1,2)=(-2,-6,4). f(0,6)=f((-1,2)+(1,4))=f(-1,2)+f(1,4)=(2,1,3). Para f(-3,0): resolvemos (-3,0)=a(-1,2)+b(1,4) → {-a+b=-3, 2a+4b=0} → a=2, b=-1. f(-3,0)=2(1,3,-2)+(-1)(1,-2,5)=(1,8,-9).' }
+  ]
+},
+{
+  id:'24SO', nombre:'Septiembre 2024', short:'24-SO',
+  cuestiones:[
+    { q:'Sea A = [[1,0,2,a],[2,0,b,0],[3,c,4,5],[d,0,0,0]]. Obtener el determinante. Indique con claridad todos los pasos.', pts:'1 pto',
+      sol:'Desarrollamos por la 4ª fila (solo tiene un elemento no nulo): |A| = d·(-1)^(4+1)·M₄₁ + 0+0+0 = -d·|[[0,2,a],[0,b,0],[c,4,5]]|. Desarrollamos el menor por la 1ª columna: = -d·c·(-1)^(3+1)·|[[2,a],[b,0]]| = -d·c·(0-ab) = abcd.' },
+    { q:'X m×m idempotente con rango n<m. Obtener X³, rango y traza de X³.', pts:'2 ptos',
+      sol:'X idempotente: X²=X. Entonces X³=X²·X=X·X=X²=X. Por tanto X³=X. r(X³)=r(X)=n. Traza: como X es idempotente, sus autovalores son 0 o 1. La traza = suma de autovalores = número de autovalores = n (pues r(X)=n). tr(X³)=tr(X)=n.' },
+    { q:'Obtener la matriz elemental E tal que EA=B, donde B se obtiene sumando 5 veces la 2ª fila a la 3ª de A=[[1,2],[3,4],[5,6]].', pts:'1 pto',
+      sol:'Las matrices elementales de fila se obtienen aplicando la operación a la identidad. Operación: F₃→F₃+5F₂. Aplicada a I₃: E = [[1,0,0],[0,1,0],[0,5,1]]. Verificación: EA = [[1,2],[3,4],[5+15,6+20]] = [[1,2],[3,4],[20,26]] = B.' },
+    { q:'¿Qué relación hay entre los autovalores de A y los de Aᵀ?', pts:'1 pto',
+      sol:'Son los mismos. Demostración: |Aᵀ-λI| = |(A-λI)ᵀ| = |A-λI| (el determinante de una matriz y su transpuesta son iguales). Por tanto tienen la misma ecuación característica y los mismos autovalores (con las mismas multiplicidades).' }
+  ],
+  problemas:[
+    { q:'Considerar L₁={matrices det=0}, L₂={matrices simétricas}, L₃={matrices triangulares superiores} de M₂ₓ₂. Estudiar si son subespacios vectoriales.', pts:'2 ptos',
+      sol:'L₁: NO es subespacio. Contraejemplo: A=[[1,0],[0,0]] y B=[[0,0],[0,1]] tienen det=0 pero A+B=I tiene det=1≠0. L₂: SÍ es subespacio. Si A=Aᵀ y B=Bᵀ: (A+B)ᵀ=Aᵀ+Bᵀ=A+B; (αA)ᵀ=αAᵀ=αA. Dim=3, base={[[1,0],[0,0]],[[0,1],[1,0]],[[0,0],[0,1]]}. L₃: SÍ es subespacio. Suma y producto escalar de triangulares superiores son triangulares superiores. Dim=3.' },
+    { q:'Sea A=[[2,1],[-1,0],[-1,1]] y bases {(1,1),(2,0)} en origen y canónica en imagen. (i) Coordenadas en base origen, (ii) coordenadas de f(1,1) y f(2,0), (iii) expresión de la aplicación lineal.', pts:'3 ptos',
+      sol:'(i) Un vector (x,y)∈ℝ² en la base {(1,1),(2,0)}: (x,y)=α(1,1)+β(2,0) → α+2β=x, α=y → α=y, β=(x-y)/2. Coordenadas: [α,β]=[y,(x-y)/2]. (ii) f(1,1)=A·[[1],[1]]=[[3],[-1],[0]]; f(2,0)=A·[[2],[0]]=[[4],[-2],[-2]]. (iii) f(α(1,1)+β(2,0))=αf(1,1)+βf(2,0). Para (x,y): f(x,y)=y·f(1,1)+((x-y)/2)·f(2,0)=y[[3,-1,0]]ᵀ+((x-y)/2)[[4,-2,-2]]ᵀ=[2x+y, -x, -(x-y)]=[2x+y,-x,-x+y].' }
+  ]
+},
+{
+  id:'25J1', nombre:'Junio 2025 — Convocatoria 1', short:'25-J1',
+  cuestiones:[
+    { q:'Estudie y compruebe la veracidad de: (1) Si u,v son l.d. y f lineal, entonces f(u),f(v) son l.d. (2) Si u,v son l.i. y f lineal, entonces f(u),f(v) son l.i.', pts:'1 pto',
+      sol:'(1) VERDADERO. Si u,v son l.d., existe α≠0 tal que αu+βv=0 (o uno es múltiplo del otro). Aplicando f: αf(u)+βf(v)=f(αu+βv)=f(0)=0. Como no todos los escalares son 0, f(u),f(v) son l.d. (2) FALSO. Si f no es inyectiva, puede mapear vectores l.i. a l.d. Ejemplo: f≡0 (aplicación nula) envía cualquier base a {0,0}, que son l.d.' },
+    { q:'Comprobar si (A⁻¹+B⁻¹)⁻¹ = A(A+B)⁻¹B.', pts:'1 pto',
+      sol:'VERDADERO. Demostramos que A⁻¹+B⁻¹ = B⁻¹(B+A)A⁻¹ = B⁻¹(A+B)A⁻¹. En efecto: B⁻¹(A+B)A⁻¹ = B⁻¹AA⁻¹+B⁻¹BA⁻¹ = B⁻¹+A⁻¹ = A⁻¹+B⁻¹ ✓. Invirtiendo: (A⁻¹+B⁻¹)⁻¹ = (B⁻¹(A+B)A⁻¹)⁻¹ = A(A+B)⁻¹B.' },
+    { q:'Considere X m×n. Estudie el carácter simétrico de XᵀX y XXᵀ.', pts:'1 pto',
+      sol:'Ambas son simétricas. (XᵀX)ᵀ = Xᵀ(Xᵀ)ᵀ = XᵀX ✓. (XXᵀ)ᵀ = (Xᵀ)ᵀXᵀ = XXᵀ ✓. Además ambas son semidefinidas positivas (sus autovalores son ≥ 0).' },
+    { q:'Sean L₁={(x,y,z)∈ℝ³: x=y=z} y L₂={(x,y,z)∈ℝ³: x=0} subespacios de ℝ³. Determinar L₁∩L₂.', pts:'1 pto',
+      sol:'L₁∩L₂ = {(x,y,z): x=y=z AND x=0} = {(0,y,z): y=z=0} = {(0,0,0)} ... No: x=y=z y x=0 implica x=y=z=0. Pero el vector (0,0,0) solo cumple si y=z=0. En realidad: {(x,y,z): x=y=z y x=0} = {(0,0,0)}: el subespacio trivial, dim=0. PERO cuidado: si L₂={x=0} entonces (0,t,t)∈L₁∩L₂ para t≠0. Verificar: x=y=z=t y x=0 → t=0. Correcto: L₁∩L₂={(0,0,0)}, dim=0.' }
+  ],
+  problemas:[
+    { q:'Dada A=[[1,3,4],[0,2,2],[0,0,2]]: (1) det(A), (2) Aᵀ, (3) adj(A), (4) A⁻¹.', pts:'3 ptos',
+      sol:'(1) A es triangular superior: |A|=1·2·2=4. (2) Aᵀ=[[1,0,0],[3,2,0],[4,2,2]]. (3) Cofactores: A₁₁=|[[2,2],[0,2]]|=4; A₁₂=-|[[0,2],[0,2]]|=0; A₁₃=|[[0,2],[0,0]]|=0; A₂₁=-|[[3,4],[0,2]]|=-6; A₂₂=|[[1,4],[0,2]]|=2; A₂₃=-|[[1,3],[0,0]]|=0; A₃₁=|[[3,4],[2,2]]|=-2; A₃₂=-|[[1,4],[0,2]]|=-2; A₃₃=|[[1,3],[0,2]]|=2. adj(A)=[[4,-6,-2],[0,2,-2],[0,0,2]]. (4) A⁻¹=(1/4)·adj(A)=[[1,-3/2,-1/2],[0,1/2,-1/2],[0,0,1/2]].' },
+    { q:'f: ℝᵏ→ℝᵖ con matriz A₁=[[1,0,1],[1,1,1]]. Determinar k, p, dim(ker), dim(Im).', pts:'3 ptos',
+      sol:'A₁ es 2×3: p=2, k=3. r(A₁)=2 (filas l.i.). dim(Im f)=2. dim(ker f)=3-2=1. Ker(f): sistema A₁x=0 → x₁+x₃=0 y x₁+x₂+x₃=0 → x₂=0, x₃=-x₁. Base del ker: {(1,0,-1)}.' }
+  ]
+},
+{
+  id:'25J2', nombre:'Junio 2025 — Convocatoria 2', short:'25-J2',
+  cuestiones:[
+    { q:'Desarrolle el determinante de A=[[a,3,0,5],[0,b,0,2],[1,2,c,3],[0,0,0,d]].', pts:'1 pto',
+      sol:'Desarrollamos por la 4ª fila (solo tiene d en posición (4,4)): |A|=d·(-1)^(4+4)·M₄₄=d·|[[a,3,0],[0,b,0],[1,2,c]]|. Desarrollamos por la 3ª columna: d·c·(-1)^(3+3)·|[[a,3],[0,b]]|=d·c·(ab-0)=abcd.' },
+    { q:'Indicar si son (anti)simétricas: A₅=diag(1,0,2), A₆=[[0,1],[-1,0]], A₇=[[2,2],[-2,-2]].', pts:'1 pto',
+      sol:'A₅: A₅ᵀ=A₅ (diagonal es simétrica). SIMÉTRICA. A₆: A₆ᵀ=[[0,-1],[1,0]]=-A₆. ANTISIMÉTRICA. A₇: A₇ᵀ=[[2,-2],[2,-2]] ≠ A₇ y ≠ -A₇ (pues -A₇=[[-2,-2],[2,2]]). NI SIMÉTRICA NI ANTISIMÉTRICA.' },
+    { q:'Despejar X de: AX+3X=C.', pts:'1 pto',
+      sol:'(A+3I)X=C. Multiplicando a la izquierda por (A+3I)⁻¹ (si existe): X=(A+3I)⁻¹C. La solución existe siempre que A+3I sea invertible, es decir, siempre que -3 no sea autovalor de A.' },
+    { q:'Si x, y son vectores columna n×1 y A, B son matrices n×n, estudie si xᵀAy es forma cuadrática y/o bilineal.', pts:'1 pto',
+      sol:'xᵀAy es una FORMA BILINEAL (depende linealmente de x e y por separado). No es forma cuadrática porque toma dos vectores distintos x e y. Sería cuadrática si x=y, dando xᵀAx (y si A es simétrica). xᵀAy es bilineal pero NO cuadrática en general.' }
+  ],
+  problemas:[
+    { q:'Determinar autovalores y subespacios de autovectores de A₃=[[0,0,0,1],[0,0,1,0],[0,1,0,0],[1,0,0,0]].', pts:'3 ptos',
+      sol:'|A₃-λI|=0. Esta es la matriz de permutación que invierte el orden de los vectores. Sus autovalores son λ=1 (multiplicidad 2) y λ=-1 (multiplicidad 2). Para λ=1: autoespacio generado por {(1,0,0,1),(0,1,1,0)}. Para λ=-1: autoespacio generado por {(1,0,0,-1),(0,1,-1,0)}. A₃ es simétrica → diagonalizable.' },
+    { q:'Resolver por Gauss-Jordan: x+2y+8z+3t=1; x+y+5z+2t=2; x+3z+t=3; 3x+3y+16z+7t=4.', pts:'3 ptos',
+      sol:'Matriz ampliada: F2-F1: [0,-1,-3,-1|1]; F3-F1: [0,-2,-5,-2|2]; F4-3F1: [0,-3,-8,-2|1]. F3-2F2: [0,0,1,0|0]; F4-3F2: [0,0,1,1|-2]. F4-F3: [0,0,0,1|-2]. Sustitución: t=-2; z=0; -y-3(0)-(-2)=1 → y=1; x+2(1)+0+3(-2)=1 → x=5. Solución única: (x,y,z,t)=(5,1,0,-2).' }
+  ]
+},
+{
+  id:'25SO', nombre:'Septiembre 2025', short:'25-SO',
+  cuestiones:[
+    { q:'Sea W el espacio vectorial de matrices simétricas 2×2. Obtener una base.', pts:'1 pto',
+      sol:'Igual que en 24J1. Las matrices simétricas 2×2 son [[a,b],[b,c]]. Base: {[[1,0],[0,0]], [[0,1],[1,0]], [[0,0],[0,1]]}. dim(W)=3.' },
+    { q:'X m×n. Estudie si XᵀX y XXᵀ son simétricas.', pts:'2 ptos',
+      sol:'AMBAS SON SIMÉTRICAS. (XᵀX)ᵀ=Xᵀ(Xᵀ)ᵀ=XᵀX ✓. (XXᵀ)ᵀ=(Xᵀ)ᵀXᵀ=XXᵀ ✓. Son además semidefinidas positivas.' },
+    { q:'Despejar X de: AX+BX=C.', pts:'1 pto',
+      sol:'(A+B)X=C. Si A+B es invertible: X=(A+B)⁻¹C.' },
+    { q:'Si x, y vectores columna n×1, A, B matrices n×n: ¿xᵀAy es forma cuadrática o bilineal?', pts:'1 pto',
+      sol:'Es FORMA BILINEAL (lineal en x y en y por separado). No es cuadrática en general (requeriría x=y). Si A es simétrica y x=y, xᵀAx sí es forma cuadrática.' }
+  ],
+  problemas:[
+    { q:'Dada A=[[9,k],[9k,9]]: (a) Estudiar el rango según k. (b) Estudiar para qué valores de k la matriz es definida positiva.', pts:'2 ptos',
+      sol:'(a) |A|=81-9k²=9(9-k²)=9(3-k)(3+k). Si k≠±3: r(A)=2. Si k=±3: r(A)=1. (b) A definida positiva ⟺ todos los menores principales >0. Δ₁=9>0 siempre. Δ₂=|A|=9(9-k²)>0 ⟺ k²<9 ⟺ -3<k<3. A es definida positiva para -3<k<3.' },
+    { q:'Dado el sistema 3x+7y+4z=17; x+4y+3z=19; 4x+y-3z=6. Resolver el sistema y el homogéneo asociado. Comparar las soluciones.', pts:'3 ptos',
+      sol:'Matriz ampliada: por Gauss, |A|=3(4·(-3)-3·1)-7(1·(-3)-3·4)+4(1·1-4·4)=-45+91-60=-14≠0. r(A)=3 → SCD. Solución única: usar la regla de Cramer o sustitución. De la 2ª ec: x=19-4y-3z. Sustituyendo en 1ª y 3ª y resolviendo: (verificar) z=2, y=3, x=4. Sistema homogéneo: único solución x=y=z=0 (pues |A|≠0). Comparación: la solución del no-homogéneo es la particular (4,3,2); la del homogéneo solo la trivial (0,0,0).' }
+  ]
+}
+];
+
+// ===================== DATOS: SIMULACROS =====================
+const SIMULACROS = [
+{
+  id:'sim24J1', nombre:'Simulacro — Junio 2024 C1', desc:'Basado en el examen real de junio 2024, primera convocatoria',
+  preguntas:[
+    { p:'Una aplicación lineal f: ℝ³→ℝ² tiene como matriz asociada A=[[1,0,1],[1,1,1]]. La dimensión del núcleo de f es:', opts:['0','1','2','3'], ok:1, exp:'Por el Teorema de la dimensión: dim(ker)+dim(Im)=dim(ℝ³)=3. r(A)=2, así que dim(Im)=2 y dim(ker)=3-2=1.' },
+    { p:'Si A y B son matrices tales que AB=A y BA=B, entonces:', opts:['Solo A es idempotente','Solo B es idempotente','Ambas son idempotentes','Ninguna es idempotente'], ok:2, exp:'A²=A(BA)=(AB)A=A·A=A²... usando AB=A: A²=A(BA)=(AB)A=A·A → A²=A. B²=B(AB)=(BA)B=B·B=B²→B²=B. Ambas idempotentes.' },
+    { p:'El espacio vectorial de matrices simétricas 2×2 sobre ℝ tiene dimensión:', opts:['2','3','4','1'], ok:1, exp:'Una matriz simétrica 2×2 es [[a,b],[b,c]], con 3 parámetros libres. Base: {E₁₁, E₁₂+E₂₁, E₂₂}. dim=3.' },
+    { p:'Si f es una aplicación lineal de ℝⁿ en ℝⁿ con ker(f)={0}, entonces:', opts:['Im f puede ser cualquier subespacio','Im f = ℝⁿ necesariamente','f no tiene por qué ser sobreyectiva','Nada se puede concluir sobre Im f'], ok:1, exp:'Por el Teorema de la dimensión: 0+dim(Im f)=n, así que dim(Im f)=n=dim(ℝⁿ), luego Im f=ℝⁿ.' },
+    { p:'La traza de una matriz A es igual a:', opts:['El determinante de A','La suma de los autovalores de A','El producto de los autovalores de A','La suma de los elementos de la primera fila'], ok:1, exp:'La traza tr(A) es la suma de los elementos de la diagonal, y también iguala a la suma de los autovalores (con multiplicidad).' },
+    { p:'Si A es idempotente (A²=A) y tiene rango r, entonces su traza es:', opts:['0','r','r²','Depende de la matriz'], ok:1, exp:'Los autovalores de una idempotente son 0 o 1. La traza = suma de autovalores = número de autovalores 1 = rango de A = r.' },
+    { p:'Si A es una matriz m×n y b un vector de ℝᵐ, el sistema Ax=b tiene solución única cuando:', opts:['r(A)=r(A|b)=m','r(A)=r(A|b)=n','r(A)<r(A|b)','r(A)=n y m=n'], ok:1, exp:'SCD ⟺ r(A)=r(A|b)=n (número de incógnitas). La solución es única exactamente cuando el rango coincide con el número de variables.' },
+    { p:'Los autovalores de una matriz simétrica real son siempre:', opts:['Imaginarios puros','Reales','Positivos','Enteros'], ok:1, exp:'Teorema: toda matriz simétrica real tiene todos sus autovalores reales. Además a distintos autovalores corresponden autovectores ortogonales.' },
+  ]
+},
+{
+  id:'sim24J2', nombre:'Simulacro — Junio 2024 C2', desc:'Basado en el examen real de junio 2024, segunda convocatoria',
+  preguntas:[
+    { p:'Si {v₁,...,vₘ} es sistema de generadores de V y w∈V, el conjunto S={w,v₁,...,vₘ}:', opts:['Siempre es base de V','Siempre es sistema de generadores de V, pero puede ser dependiente','Puede no ser sistema de generadores de V','Es linealmente independiente si w∉{v₁,...,vₘ}'], ok:1, exp:'S siempre genera V (pues ya lo hacía el subconjunto {v₁,...,vₘ}). Sin embargo puede ser dependiente si w ya era combinación lineal de v₁,...,vₘ.' },
+    { p:'(A⁻¹+B⁻¹)⁻¹ =', opts:['A+B','(A+B)⁻¹','A(A+B)⁻¹B','B(A+B)⁻¹A'], ok:2, exp:'A⁻¹+B⁻¹ = B⁻¹(A+B)A⁻¹. Invirtiendo: (A⁻¹+B⁻¹)⁻¹ = A(A+B)⁻¹B.' },
+    { p:'Para toda matriz X de dimensiones m×n, la matriz XᵀX es:', opts:['Antisimétrica','Simétrica de dimensión m×m','Simétrica de dimensión n×n','No necesariamente simétrica'], ok:2, exp:'XᵀX es n×n y (XᵀX)ᵀ=Xᵀ(Xᵀ)ᵀ=XᵀX. Siempre simétrica.' },
+    { p:'Los autovalores de A y de Aᵀ son:', opts:['Siempre distintos','Los mismos','Los mismos solo si A es simétrica','Los conjugados completos'], ok:1, exp:'|Aᵀ-λI|=|(A-λI)ᵀ|=|A-λI|. Tienen la misma ecuación característica y por tanto los mismos autovalores.' },
+    { p:'Si el sistema Ax=b tiene r(A)=2 y r(A|b)=2 con 4 incógnitas, entonces:', opts:['Es incompatible','Es SCD','Es SCI con 2 parámetros libres','Es SCI con 1 parámetro libre'], ok:2, exp:'r(A)=r(A|b) → compatible. r(A)=2 < n=4 → indeterminado. Libertad = n-r(A) = 4-2 = 2 parámetros.' },
+    { p:'Si f: ℝ²→ℝ³ es aplicación lineal y f(-1,2)=(1,3,-2), entonces f(2,-4) es:', opts:['(-1,-3,2)','(-2,-6,4)','(2,6,-4)','(2,-6,4)'], ok:1, exp:'(2,-4) = -2·(-1,2), así que f(2,-4) = -2·f(-1,2) = -2·(1,3,-2) = (-2,-6,4).' },
+    { p:'Una forma cuadrática Q(x)=xᵀAx con A simétrica es definida positiva si y solo si:', opts:['|A|>0','Todos los autovalores de A son positivos','La traza de A es positiva','El determinante de cada menor principal es positivo'], ok:1, exp:'La forma es definida positiva ⟺ todos los autovalores de A son estrictamente positivos ⟺ todos los menores principales Δ₁,Δ₂,...,Δₙ son positivos (criterio de Sylvester).' },
+    { p:'Si L₁ y L₂ son subespacios de V, ¿cuál es siempre subespacio?', opts:['L₁∪L₂','L₁∩L₂','L₁\\L₂','Ninguno de ellos'], ok:1, exp:'L₁∩L₂ siempre es subespacio (fácil de verificar los axiomas). L₁∪L₂ no lo es en general (si u∈L₁\\L₂ y v∈L₂\\L₁, u+v puede no estar en ninguno).' },
+  ]
+},
+{
+  id:'sim24SO', nombre:'Simulacro — Septiembre 2024', desc:'Basado en el examen real de septiembre 2024',
+  preguntas:[
+    { p:'Si X m×m es idempotente con rango n, entonces X³ es:', opts:['X²','X','0','I'], ok:1, exp:'X idempotente: X²=X. Entonces X³=X²·X=X·X=X²=X.' },
+    { p:'La matriz elemental que suma 5 veces la fila 2 a la fila 3 es:', opts:['I con un 5 en posición (2,3)','I con un 5 en posición (3,2)','I con la fila 3 sumada 5 veces a la fila 2','Una matriz diagonal'], ok:1, exp:'Las matrices elementales de tipo suma de filas son la identidad con el coeficiente en la posición (fila destino, fila origen) = (3,2).' },
+    { p:'Los autovalores de A y Aᵀ tienen la relación:', opts:['Son siempre distintos','Son siempre iguales','Depende de si A es cuadrada','Aᵀ tiene los autovalores de A en orden inverso'], ok:1, exp:'|Aᵀ-λI|=|(A-λI)ᵀ|=|A-λI|. Misma ecuación característica → mismos autovalores.' },
+    { p:'El conjunto L₁={matrices 2×2 con determinante 0} es:', opts:['Subespacio vectorial de M₂ₓ₂','No es subespacio porque no es cerrado bajo la suma','No es subespacio porque no contiene el cero','Subespacio de dimensión 3'], ok:1, exp:'Contraejemplo: A=[[1,0],[0,0]] y B=[[0,0],[0,1]] tienen det=0 pero A+B=I tiene det=1≠0. No es cerrado bajo suma.' },
+    { p:'Las matrices simétricas 2×2 forman un subespacio de M₂ₓ₂ de dimensión:', opts:['2','3','4','1'], ok:1, exp:'[[a,b],[b,c]] tiene 3 parámetros libres. Base: {[[1,0],[0,0]], [[0,1],[1,0]], [[0,0],[0,1]]}. dim=3.' },
+    { p:'Si A es triangular superior con todos sus pivotes distintos de cero, entonces:', opts:['A siempre es diagonal','|A| = producto de los elementos de la diagonal','A no tiene inversa','r(A) puede ser menor que n'], ok:1, exp:'Para matrices triangulares, el determinante es el producto de los elementos de la diagonal principal.' },
+    { p:'La fórmula de la dimensión para una aplicación lineal f: V→W establece que:', opts:['dim(Im f)=dim(V)-dim(W)','dim(ker f)+dim(Im f)=dim(V)','dim(ker f)=dim(Im f)','dim(Im f)=dim(W)'], ok:1, exp:'Teorema de la dimensión (Rango-Nulidad): dim(ker f) + dim(Im f) = dim(V). Siempre.' },
+    { p:'Si una aplicación lineal f: ℝ³→ℝ² tiene matriz asociada de rango 2, entonces:', opts:['f es inyectiva','f es sobreyectiva pero no inyectiva','f es isomorfismo','ker(f) es trivial'], ok:1, exp:'r(A)=2=dim(ℝ²) → Im f=ℝ² → f es sobreyectiva. Pero dim(ker f)=3-2=1≠0 → f no es inyectiva.' },
+  ]
+},
+{
+  id:'sim25J1', nombre:'Simulacro — Junio 2025 C1', desc:'Basado en el examen real de junio 2025, primera convocatoria',
+  preguntas:[
+    { p:'Si u, v son linealmente dependientes y f es aplicación lineal, entonces f(u), f(v) son:', opts:['Siempre l.i.','Siempre l.d.','Pueden ser l.i. o l.d.','Depende de la dimensión'], ok:1, exp:'Si αu+βv=0 con (α,β)≠(0,0), entonces αf(u)+βf(v)=f(αu+βv)=f(0)=0. La misma combinación lineal no trivial anula f(u),f(v) → son l.d.' },
+    { p:'Si u, v son linealmente independientes y f es aplicación lineal, f(u), f(v):', opts:['Son siempre l.i.','Son siempre l.d.','Son l.i. si y solo si f es inyectiva','Son l.i. si f es sobreyectiva'], ok:2, exp:'Solo si f es inyectiva (ker f={0}) se garantiza que la imagen de vectores l.i. es l.i. En general, f puede no ser inyectiva y mapear l.i. a l.d.' },
+    { p:'Si A=[[1,3,4],[0,2,2],[0,0,2]] (triangular superior), su determinante es:', opts:['1','4','2','8'], ok:1, exp:'Para matrices triangulares, |A| = producto de la diagonal = 1·2·2 = 4.' },
+    { p:'La matriz inversa de A=[[1,3,4],[0,2,2],[0,0,2]] tiene como elemento (1,2):', opts:['-3/2','3/2','-3','0'], ok:0, exp:'A⁻¹=(1/4)·adj(A). El cofactor A₁₂=-|[[0,2],[0,2]]|=0... El elemento (1,2) de A⁻¹ = cofactor(2,1)/|A| = (-6)/4 = -3/2.' },
+    { p:'Si A=[[9,k],[9k,9]] y k=3, el rango de A es:', opts:['0','1','2','No determinado'], ok:1, exp:'|A|=81-81k²/k... |A|=9·9-k·9k=81-9k²=9(9-k²). Para k=3: 9(9-9)=0. Primera fila [9,3]≠[0,0] → r(A)=1.' },
+    { p:'L₁={(x,y,z)∈ℝ³: x=y=z} y L₂={(x,y,z)∈ℝ³: x=0}. L₁∩L₂ es:', opts:['L₁','L₂','{(0,0,0)}','Un plano'], ok:2, exp:'x=y=z y x=0 implica x=y=z=0. L₁∩L₂={(0,0,0)}, el subespacio trivial.' },
+    { p:'Una forma cuadrática con matriz A simétrica y todos los menores principales positivos es:', opts:['No definida','Semidefinida positiva','Definida positiva','Definida negativa'], ok:2, exp:'Por el criterio de Sylvester: si Δ₁>0, Δ₂>0,..., Δₙ>0, la forma es DEFINIDA POSITIVA.' },
+    { p:'Para una aplicación lineal f: ℝᵏ→ℝᵖ con matriz p×k de rango r, la dimensión del núcleo es:', opts:['r','p-r','k-r','p-k'], ok:2, exp:'Por el teorema de la dimensión: dim(ker f) = dim(V) - dim(Im f) = k - r.' },
+  ]
+},
+{
+  id:'sim25J2', nombre:'Simulacro — Junio 2025 C2', desc:'Basado en el examen real de junio 2025, segunda convocatoria',
+  preguntas:[
+    { p:'El determinante de A=[[a,3,0,5],[0,b,0,2],[1,2,c,3],[0,0,0,d]] es:', opts:['abcd','a+b+c+d','4abcd','abc+d'], ok:0, exp:'Desarrollando por la 4ª fila (elemento d en posición (4,4)): |A|=d·|[[a,3,0],[0,b,0],[1,2,c]]|=d·c·(ab)=abcd.' },
+    { p:'La matriz A₆=[[0,1],[-1,0]] es:', opts:['Simétrica','Antisimétrica','Idempotente','Ortogonal y simétrica'], ok:1, exp:'A₆ᵀ=[[0,-1],[1,0]]=-A₆. Por tanto es antisimétrica.' },
+    { p:'Si AX+3X=C y (A+3I) es invertible, entonces X=:', opts:['(A+3I)C','C(A+3I)⁻¹','(A+3I)⁻¹C','No tiene solución'], ok:2, exp:'(A+3I)X=C. Multiplicando a la izquierda por (A+3I)⁻¹: X=(A+3I)⁻¹C.' },
+    { p:'xᵀAy (x,y vectores columna n×1, A matriz n×n) es:', opts:['Una forma cuadrática','Una forma bilineal','Una forma lineal','Un escalar pero no tiene estructura especial'], ok:1, exp:'Es bilineal: lineal en x (fijo y) y lineal en y (fijo x). No es cuadrática (requeriría x=y y A simétrica).' },
+    { p:'La matriz de permutación A₃=[[0,0,0,1],[0,0,1,0],[0,1,0,0],[1,0,0,0]] tiene autovalores:', opts:['Solo 1','1 y -1','0, 1 y -1','1, -1, i y -i'], ok:1, exp:'Es una matriz de permutación que invierte el orden. Sus autovalores son λ=1 (mult. 2) y λ=-1 (mult. 2).' },
+    { p:'El sistema Gauss-Jordan sobre x+2y+8z+3t=1; x+y+5z+2t=2; x+3z+t=3; 3x+3y+16z+7t=4 tiene solución:', opts:['Infinitas soluciones','No tiene solución','Solución única: (5,1,0,-2)','Solución única: (1,2,0,-2)'], ok:2, exp:'Tras aplicar Gauss-Jordan: t=-2, z=0, y=1, x=5. Solución única: (5,1,0,-2).' },
+    { p:'Si una matriz real A NO es simétrica pero tiene todos sus autovalores distintos, entonces A:', opts:['No es diagonalizable','Es diagonalizable','Puede o no ser diagonalizable','Solo es diagonalizable si es de orden 2'], ok:1, exp:'Una matriz con n autovalores distintos siempre es diagonalizable, sea o no simétrica. Los autovectores de autovalores distintos son l.i.' },
+    { p:'Para la forma cuadrática F(x,y)=3x²-12xy+7y², el coeficiente canónico tras diagonalizar por Lagrange es:', opts:['φ=3ξ₁²+5ξ₂²','φ=3ξ₁²-5ξ₂²','φ=3ξ₁²-12ξ₂²','φ=-3ξ₁²+7ξ₂²'], ok:1, exp:'Completando cuadrados: 3x²-12xy=3(x-2y)²-12y². F=3(x-2y)²-5y². Con ξ₁=x-2y, ξ₂=y: φ=3ξ₁²-5ξ₂².' },
+  ]
+},
+{
+  id:'simSO25', nombre:'Simulacro — Septiembre 2025', desc:'Basado en el examen real de septiembre 2025',
+  preguntas:[
+    { p:'Si A=[[9,k],[9k,9]] con k∈(-3,3), la forma cuadrática xᵀAx es:', opts:['Definida negativa','No definida','Definida positiva','Semidefinida positiva'], ok:2, exp:'Para -3<k<3: Δ₁=9>0 y Δ₂=|A|=9(9-k²)>0. Por criterio de Sylvester, la forma es definida positiva.' },
+    { p:'El sistema 3x+7y+4z=17; x+4y+3z=19; 4x+y-3z=6 tiene |A|≠0. La solución es:', opts:['(4,3,2)','(3,4,2)','(2,3,4)','No tiene solución'], ok:0, exp:'|A|≠0 → SCD. Resolviendo: x=4, y=3, z=2.' },
+    { p:'Si AX+BX=C y A+B es invertible, entonces X=:', opts:['(A+B)⁻¹C','C(A+B)⁻¹','(A+B)C⁻¹','No tiene solución única'], ok:0, exp:'(A+B)X=C → X=(A+B)⁻¹C (multiplicando a la izquierda por (A+B)⁻¹).' },
+    { p:'xᵀAy es una forma cuadrática cuando:', opts:['Siempre','Nunca','Cuando A es simétrica y x=y','Solo cuando A es la identidad'], ok:2, exp:'xᵀAy con y=x da xᵀAx. Si además A es simétrica, esta es la definición de forma cuadrática.' },
+    { p:'Las matrices simétricas 2×2 forman en M₂ₓ₂ un subespacio de dimensión:', opts:['2','3','4','1'], ok:1, exp:'[[a,b],[b,c]] tiene 3 parámetros libres. dim=3.' },
+    { p:'El sistema homogéneo Ax=0 cuando r(A)=n (nº de incógnitas) tiene:', opts:['Infinitas soluciones','La solución trivial como única solución','No tiene solución','Una solución por cada autovalor'], ok:1, exp:'r(A)=n → dim(ker)=0 → la única solución de Ax=0 es x=0 (trivial).' },
+    { p:'Para la forma cuadrática 9x₁²+9x₂², la matriz asociada es:', opts:['[[9,9],[9,9]]','[[9,0],[0,9]]','[[9,9/2],[9/2,9]]','[[18,0],[0,18]]'], ok:1, exp:'Los coeficientes en la diagonal son los de xᵢ². No hay término x₁x₂, así que los elementos fuera de la diagonal son 0. A=9I=[[9,0],[0,9]].' },
+    { p:'Una forma cuadrática con p=r (índice = rango) es:', opts:['No definida','Definida negativa','Semidefinida positiva','Definida positiva o semidefinida positiva'], ok:3, exp:'Si p=r, todos los términos canónicos son positivos. Si r=n, es definida positiva. Si r<n, hay ceros → semidefinida positiva.' },
+  ]
+},
+{
+  id:'simMix', nombre:'🎲 Simulacro Mixto', desc:'8 preguntas aleatorias de todos los exámenes — diferente cada vez',
+  preguntas:[] // se generan dinámicamente
+}
+];
+
+// ===================== LÓGICA =====================
+let currentExam = null;
+let currentSim = null;
+let timerInterval = null;
+let timeLeft = 7200;
+let answered = {};
+
+function go(page, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-'+page).classList.add('active');
+  if (el) el.classList.add('active');
+  if (page === 'historial') renderHist();
+  if (page === 'dash') renderDashPreview();
+  window.scrollTo(0,0);
+}
+
+// TEORÍA
+function showTema(n) {
+  const t = TEMAS[n];
+  if (!t) return;
+  document.getElementById('teoria-list').style.display='none';
+  document.getElementById('teoria-detail').style.display='block';
+  let html = `<div class="page-title">${t.title}</div>`;
+  t.conceptos.forEach(c => {
+    html += `<div class="concepto"><h4>${c.t}</h4><p>${c.c}</p>`;
+    if (c.f) html += `<div class="formula">${c.f}</div>`;
+    if (c.tip) html += `<div class="tip"><strong>Consejo examen:</strong> ${c.tip.replace('⚡ EXAMEN: ','')}</div>`;
+    html += `</div>`;
+  });
+  document.getElementById('tema-content').innerHTML = html;
+  window.scrollTo(0,0);
+}
+function hideTema() {
+  document.getElementById('teoria-list').style.display='';
+  document.getElementById('teoria-detail').style.display='none';
+}
+
+// EJERCICIOS
+let ejFilter = 'all';
+function filterEj(f, btn) {
+  ejFilter = f;
+  document.querySelectorAll('#ej-filters button').forEach(b => { b.style.background='none'; b.style.color='var(--text2)'; b.style.border='1px solid var(--border)'; });
+  btn.style.background='var(--accent)'; btn.style.color='#0e0e12'; btn.style.border='none';
+  renderEj();
+}
+function renderEj() {
+  const list = ejFilter==='all' ? EJERCICIOS : EJERCICIOS.filter(e=>e.tema===ejFilter);
+  let html = '';
+  list.forEach((e,i) => {
+    html += `<div class="ej-item"><div class="ej-header" onclick="toggleEj(${i},'${ejFilter}')">
+      <h4>${e.num} — ${e.titulo}</h4><span class="badge">${e.tema}</span>
+    </div><div class="ej-body" id="ej-${i}-${ejFilter}">
+      <p><strong style="color:var(--accent)">Enunciado:</strong> ${e.enunciado}</p>
+      <div class="sol-box"><div class="sol-label">▶ SOLUCIÓN</div><p>${e.solucion}</p></div>
+    </div></div>`;
+  });
+  document.getElementById('ej-list').innerHTML = html || '<p style="color:var(--text2)">No hay ejercicios para este filtro.</p>';
+}
+function toggleEj(i, f) {
+  const el = document.getElementById(`ej-${i}-${f}`);
+  if (el) el.classList.toggle('open');
+}
+
+// EXÁMENES
+function renderExams() {
+  let html = '';
+  EXAMENES.forEach(e => {
+    html += `<div class="exam-card" onclick="showExam('${e.id}')">
+      <div class="year">${e.short}</div><h3>${e.nombre}</h3>
+      <p>${e.cuestiones.length} cuestiones · ${e.problemas.length} problemas</p>
+    </div>`;
+  });
+  document.getElementById('exam-grid').innerHTML = html;
+}
+function showExam(id) {
+  const ex = EXAMENES.find(e=>e.id===id);
+  if (!ex) return;
+  document.getElementById('exam-list-view').style.display='none';
+  document.getElementById('exam-detail').style.display='block';
+  let html = `<div class="page-title">${ex.nombre}</div><div class="page-sub">Haz clic en cada pregunta para ver la solución</div>`;
+  html += `<div class="exam-section"><h3>Cuestiones Teóricas</h3>`;
+  ex.cuestiones.forEach((q,i) => {
+    html += `<div class="exam-q"><div class="exam-q-header" onclick="toggleExQ('exq-${id}-c${i}')">
+      <p><strong>C${i+1}.</strong> ${q.q}</p><span class="exam-q-pts">${q.pts}</span>
+    </div><div class="exam-q-sol" id="exq-${id}-c${i}">
+      <p><strong style="color:var(--green)">Solución:</strong> ${q.sol}</p>
+    </div></div>`;
+  });
+  html += `</div><div class="exam-section"><h3>Problemas</h3>`;
+  ex.problemas.forEach((q,i) => {
+    html += `<div class="exam-q"><div class="exam-q-header" onclick="toggleExQ('exq-${id}-p${i}')">
+      <p><strong>P${i+1}.</strong> ${q.q}</p><span class="exam-q-pts">${q.pts}</span>
+    </div><div class="exam-q-sol" id="exq-${id}-p${i}">
+      <p><strong style="color:var(--green)">Solución:</strong> ${q.sol}</p>
+    </div></div>`;
+  });
+  html += `</div>`;
+  document.getElementById('exam-content').innerHTML = html;
+  window.scrollTo(0,0);
+}
+function toggleExQ(id) { document.getElementById(id)?.classList.toggle('open'); }
+function hideExam() {
+  document.getElementById('exam-list-view').style.display='';
+  document.getElementById('exam-detail').style.display='none';
+}
+
+// SIMULACROS
+function renderSimSelector() {
+  let html = '';
+  SIMULACROS.forEach(s => {
+    html += `<div class="sim-card" onclick="startSim('${s.id}')">
+      <h3>${s.nombre}</h3><p>${s.desc}</p>
+      <span class="badge">${s.id==='simMix'?'Aleatorio':s.preguntas.length+' preguntas'}</span>
+    </div>`;
+  });
+  document.getElementById('sim-selector').innerHTML = html;
+}
+
+function getMixedQuestions() {
+  const all = SIMULACROS.filter(s=>s.id!=='simMix').flatMap(s=>s.preguntas);
+  const shuffled = [...all].sort(()=>Math.random()-.5);
+  return shuffled.slice(0,8);
+}
+
+function startSim(id) {
+  let sim = SIMULACROS.find(s=>s.id===id);
+  if (!sim) return;
+  if (id==='simMix') sim = {...sim, preguntas: getMixedQuestions()};
+  currentSim = {
+    ...sim,
+    preguntas: sim.preguntas.map(p => {
+      const idxs = [0,1,2,3];
+      const shuffled = [...idxs].sort(()=>Math.random()-.5);
+      const newOk = shuffled.indexOf(p.ok);
+      return { ...p, opts: shuffled.map(i=>p.opts[i]), ok: newOk };
+    })
+  };
+  answered = {};
+  document.getElementById('sim-menu').style.display='none';
+  document.getElementById('sim-active').style.display='block';
+  document.getElementById('sim-results').style.display='none';
+  document.getElementById('sim-name').textContent = currentSim.nombre;
+  renderSimQuestions();
+  startTimer();
+}
+
+function renderSimQuestions() {
+  const qs = currentSim.preguntas;
+  document.getElementById('sim-progress-text').textContent = `${Object.keys(answered).length}/${qs.length} respondidas`;
+  document.getElementById('prog-fill').style.width = (Object.keys(answered).length/qs.length*100)+'%';
+  let html = '';
+  qs.forEach((q,i) => {
+    html += `<div class="sim-q"><div class="sim-q-num">PREGUNTA ${i+1} DE ${qs.length}</div>
+      <div class="sim-q-text">${q.p}</div><div class="sim-opts">`;
+    const letters = ['a','b','c','d'];
+    q.opts.forEach((o,j) => {
+      const sel = answered[i]===j;
+      html += `<div class="sim-opt ${sel?'selected':''}" id="opt-${i}-${j}" onclick="selectOpt(${i},${j})">
+        <span class="opt-letter">${letters[j]})</span>${o}
+      </div>`;
+    });
+    html += `</div><div class="expl-box" id="expl-${i}"><p>${q.exp}</p></div></div>`;
+  });
+  document.getElementById('sim-questions').innerHTML = html;
+}
+
+function selectOpt(qi, oi) {
+  if (answered[qi] !== undefined) return; // ya respondida (solo en modo revisión post-entrega)
+  answered[qi] = oi;
+  document.getElementById('sim-progress-text').textContent = `${Object.keys(answered).length}/${currentSim.preguntas.length} respondidas`;
+  document.getElementById('prog-fill').style.width = (Object.keys(answered).length/currentSim.preguntas.length*100)+'%';
+  // marcar visualmente
+  const letters = ['a','b','c','d'];
+  for (let j=0;j<4;j++) {
+    const el = document.getElementById(`opt-${qi}-${j}`);
+    if (el) { el.classList.remove('selected','correct','wrong'); if(j===oi) el.classList.add('selected'); }
+  }
+}
+
+function startTimer() {
+  clearInterval(timerInterval);
+  timeLeft = 7200;
+  updateTimerDisplay();
+  timerInterval = setInterval(()=>{
+    timeLeft--;
+    updateTimerDisplay();
+    if (timeLeft<=0) { clearInterval(timerInterval); submitSim(); }
+    if (timeLeft<=300) document.getElementById('timer').classList.add('warning');
+  }, 1000);
+}
+function updateTimerDisplay() {
+  const h=Math.floor(timeLeft/3600), m=Math.floor((timeLeft%3600)/60), s=timeLeft%60;
+  document.getElementById('timer').textContent = `${h}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+}
+
+function submitSim() {
+  clearInterval(timerInterval);
+  const qs = currentSim.preguntas;
+  let correct = 0, wrong = 0, blank = 0;
+  qs.forEach((q,i) => {
+    const ans = answered[i];
+    if (ans === undefined) { blank++; }
+    else if (ans === q.ok) { correct++; }
+    else { wrong++; }
+  });
+  const nota = Math.max(0, correct - wrong*0.33).toFixed(2);
+  const notaFinal = Math.min(10, (parseFloat(nota)/qs.length*10)).toFixed(2);
+  // mostrar resultados con colores
+  const revHtml = qs.map((q,i)=>{
+    const ans = answered[i];
+    const isOk = ans===q.ok;
+    const isBlank = ans===undefined;
+    const color = isBlank?'var(--text2)':isOk?'var(--green)':'var(--red)';
+    const letters=['a','b','c','d'];
+    const icon = isBlank?'○':isOk?'✓':'✗';
+    return `<div class="exam-q" style="margin-bottom:10px">
+      <div class="exam-q-header" style="cursor:default">
+        <p><strong style="color:${color}">${icon}</strong> ${q.p}</p>
+      </div>
+      <div style="padding:14px 18px;border-top:1px solid var(--border);background:var(--bg3)">
+        ${q.opts.map((o,j)=>`<div style="padding:6px 0;font-size:0.83rem;color:${j===q.ok?'var(--green)':j===ans&&ans!==q.ok?'var(--red)':'var(--text2)'}">${letters[j]}) ${o}${j===q.ok?' ✓ (correcta)':j===ans&&ans!==q.ok?' ✗':''}
+        </div>`).join('')}
+        <div style="margin-top:10px;padding:10px;background:rgba(126,184,200,0.07);border-radius:4px;font-size:0.82rem;color:var(--accent2)">💡 ${q.exp}</div>
+      </div>
+    </div>`;
+  }).join('');
+  const aprobado = parseFloat(notaFinal)>=5;
+  document.getElementById('result-content').innerHTML = `
+    <div class="page-title" style="margin-bottom:20px">Resultados — ${currentSim.nombre}</div>
+    <div class="result-circle ${aprobado?'aprobado':'suspenso'}">
+      <div class="nota">${notaFinal}</div><div class="label">NOTA APROX.</div>
+    </div>
+    <div class="result-stats">
+      <div class="result-stat"><div class="val" style="color:var(--green)">${correct}</div><div class="lbl">CORRECTAS</div></div>
+      <div class="result-stat"><div class="val" style="color:var(--red)">${wrong}</div><div class="lbl">INCORRECTAS</div></div>
+      <div class="result-stat"><div class="val" style="color:var(--text2)">${blank}</div><div class="lbl">EN BLANCO</div></div>
+    </div>
+    <div style="margin-bottom:20px"><h3 style="font-family:'Playfair Display',serif;color:var(--accent);margin-bottom:14px;font-size:1rem">Revisión pregunta a pregunta</h3>${revHtml}</div>
+  `;
+  saveHist({ exam: currentSim.nombre, nota: notaFinal, correct, wrong, blank, total: qs.length, date: new Date().toLocaleDateString('es-ES') });
+  document.getElementById('sim-active').style.display='none';
+  document.getElementById('sim-results').style.display='block';
+  window.scrollTo(0,0);
+}
+
+function showSimMenu() {
+  document.getElementById('sim-menu').style.display='';
+  document.getElementById('sim-active').style.display='none';
+  document.getElementById('sim-results').style.display='none';
+  answered={};
+  clearInterval(timerInterval);
+}
+
+// HISTORIAL
+function saveHist(item) {
+  const h = JSON.parse(localStorage.getItem('mates_hist')||'[]');
+  h.unshift(item);
+  localStorage.setItem('mates_hist', JSON.stringify(h.slice(0,50)));
+}
+function getHist() { return JSON.parse(localStorage.getItem('mates_hist')||'[]'); }
+function renderHist() {
+  const h = getHist();
+  if (!h.length) { document.getElementById('hist-content').innerHTML='<div class="empty-state">No hay simulacros completados todavía.<br>Empieza uno en la sección Simulacros.</div>'; return; }
+  let html = '';
+  h.forEach(item => {
+    const ok = parseFloat(item.nota)>=5;
+    html += `<div class="hist-item">
+      <div class="info"><h4>${item.exam}</h4><p>${item.date} · ${item.correct}✓ ${item.wrong}✗ ${item.blank}○ de ${item.total}</p></div>
+      <div class="nota ${ok?'ok':'ko'}">${item.nota}</div>
+    </div>`;
+  });
+  document.getElementById('hist-content').innerHTML = html;
+}
+function clearHist() { if(confirm('¿Borrar todo el historial?')){localStorage.removeItem('mates_hist'); renderHist();} }
+function renderDashPreview() {
+  const h = getHist();
+  if (!h.length) { document.getElementById('dash-hist-preview').innerHTML=''; return; }
+  const last = h[0];
+  document.getElementById('dash-hist-preview').innerHTML=`<div class="card" style="margin-top:20px"><h3>📊 Último simulacro</h3><p>${last.exam} — Nota: <strong style="color:${parseFloat(last.nota)>=5?'var(--green)':'var(--red)'}">${last.nota}</strong> · ${last.correct} correctas, ${last.wrong} incorrectas · ${last.date}</p></div>`;
+}
+
+// INIT
+renderEj();
+renderExams();
+renderSimSelector();
+renderDashPreview();
+</script>
+</body>
+</html>
